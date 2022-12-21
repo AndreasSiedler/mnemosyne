@@ -2,15 +2,15 @@ import React, { ReactElement, useCallback, useMemo } from "react";
 import { Editable, withReact, Slate } from "slate-react";
 import { createEditor, Editor, Location, Node, Range, Transforms } from "slate";
 import { withHistory } from "slate-history";
-import { insertTemplateBlock } from "./TemplateBlock";
 import { hotkeyHandler } from "../../utils/editorUtils";
 import { withVoids } from "../../wraps/VoidBlocks";
-import { BlockButton } from "./BlockButton";
-import { Element } from "./Element";
 import { Leaf } from "./Leaf";
+import { Box } from "@chakra-ui/react";
 import { MarkButton } from "./MarkButton";
 import { Toolbar } from "./Toolbar";
-import { Box } from "@chakra-ui/react";
+import { insertTemplateBlock } from "./TemplateBlock";
+import { Element } from "./Element";
+import { BlockButton } from "./BlockButton";
 
 // TODO: add an onChange handler to the editor that will replace any detected {{ elements with a template maker dropdown
 // the template maker dropdown should just be an editable void that has the ability to take a name input and add some options
