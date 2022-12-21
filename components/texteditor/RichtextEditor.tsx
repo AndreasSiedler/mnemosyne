@@ -23,8 +23,8 @@ type RichTextEditorProsp = {
 };
 
 export const RichTextEditor = ({ value, onChange }: RichTextEditorProsp): ReactElement => {
-  const renderElement = useCallback((props) => <Element {...props} />, []);
-  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
+  const renderElement = useCallback((props: any) => <Element {...props} />, []);
+  const renderLeaf = useCallback((props: any) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(withVoids(createEditor()) as any)), []);
 
   const InitialState = [

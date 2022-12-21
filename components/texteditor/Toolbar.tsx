@@ -1,6 +1,10 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
-export const Toolbar: React.FC = ({ children }) => {
+type ToolbarProps = {
+  children: ReactNode;
+};
+
+export const Toolbar = ({ children }: ToolbarProps) => {
   return (
     <div className="toolbar-container">
       <ul>{children}</ul>
