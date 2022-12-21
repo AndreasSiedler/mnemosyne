@@ -1,5 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import React, { createRef, useEffect, useState } from "react";
+import { API, graphqlOperation } from "aws-amplify";
 import {
   FormErrorMessage,
   FormControl,
@@ -26,6 +27,7 @@ import { MoodIcon } from "./MoodIcon";
 import { BsLock } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
 import { POSTS_NEW_ROUTE } from "../../pages/posts/new";
+import { createTodo } from "../../graphql/mutations";
 
 const formSteps = ["mood", "description", "settings"];
 
@@ -159,7 +161,13 @@ export default function AddPost() {
         caption: data.caption,
         cover: cover as string,
       };
-      console.log(data);
+      const result = await API.graphql(
+        graphqlOperation(createTodo, {
+          input: {
+            name: "My first todo!",
+          },
+        })
+      );
     } else {
       router.push(`${POSTS_NEW_ROUTE}?step=${activeStep + 1}`);
     }
