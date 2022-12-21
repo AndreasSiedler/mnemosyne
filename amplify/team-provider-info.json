@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-mnemosyne-dev-180607-authRole",
+      "UnauthRoleArn": "arn:aws:iam::241301255123:role/amplify-mnemosyne-dev-180607-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::241301255123:role/amplify-mnemosyne-dev-180607-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-mnemosyne-dev-180607-deployment",
+      "UnauthRoleName": "amplify-mnemosyne-dev-180607-unauthRole",
+      "StackName": "amplify-mnemosyne-dev-180607",
+      "StackId": "arn:aws:cloudformation:eu-west-2:241301255123:stack/amplify-mnemosyne-dev-180607/c3ca9100-8151-11ed-acc0-02837c0d4e3a",
+      "AmplifyAppId": "d236vufy2g59e2"
+    },
+    "categories": {
+      "api": {
+        "mnemosyne": {}
+      }
+    }
+  }
+}
