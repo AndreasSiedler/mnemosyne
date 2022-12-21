@@ -42,7 +42,7 @@
     axios "0.26.0"
     tslib "^1.8.0"
 
-"@aws-amplify/api@5.0.7":
+"@aws-amplify/api@5.0.7", "@aws-amplify/api@^5.0.7":
   version "5.0.7"
   resolved "https://registry.yarnpkg.com/@aws-amplify/api/-/api-5.0.7.tgz#0b1fb7c6ff82050ba2841c760baeb4f6eb56fe25"
   integrity sha512-tOSDIgyl2OF3jtAfen4Bhpy0/LUDgBHXVbbAHpp0rXFUZpS8uEvKmKESgi72rlHVsIPZN2OcU6jBb3Tb0WTxog==

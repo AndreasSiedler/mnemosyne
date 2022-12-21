@@ -11,7 +11,6 @@ import {
   Image,
   Spacer,
   Heading,
-  Textarea,
   Progress,
   Container,
   IconButton,
@@ -27,9 +26,9 @@ import { MoodIcon } from "./MoodIcon";
 import { BsLock } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
 import { POSTS_NEW_ROUTE } from "../../pages/posts/new";
-import { createTodo } from "../../graphql/mutations";
+import { createEntry } from "../../graphql/mutations";
 
-const formSteps = ["mood", "description", "settings"];
+const formSteps = ["mood", "content"];
 
 export type ICreatePostInput = {
   mood: number;
@@ -40,7 +39,7 @@ export type ICreatePostInput = {
 };
 
 /**
- * Renders a Signup form
+ * Renders an Add Post form
  * @return {ReactElement}
  */
 export default function AddPost() {
@@ -48,32 +47,6 @@ export default function AddPost() {
   const router = useRouter();
   const toast = useToast();
   const uploadInputRef = createRef<HTMLInputElement>();
-
-  const { error, mutate, status } = useMutation(
-    (todo) =>
-      fetch("https://jsonplaceholder.typicode.com/todos", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-        body: JSON.stringify({
-          userId: 1,
-          title: todo,
-          completed: false,
-        }),
-      }).then((res) => res.json()),
-    {
-      // onSuccess(data) {
-      //   console.log("Succesful", { data });
-      // },
-      // onError(error) {
-      //   console.log("Failed", { error });
-      // },
-      // onSettled() {
-      //   console.log("Mutation completed.");
-      // },
-    }
-  );
 
   const [cover, setCover] = useState<string | ArrayBuffer | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | ArrayBuffer | null>(null);
@@ -95,6 +68,40 @@ export default function AddPost() {
   const content = watch("content");
   const title = watch("title");
 
+  const { mutate, isLoading } = useMutation(
+    (data: ICreatePostInput) => {
+      return API.graphql<any>(
+        graphqlOperation(createEntry, {
+          input: {
+            mood: data.mood,
+            content: JSON.stringify(data.content),
+          },
+        })
+      );
+    },
+    {
+      onError: () =>
+        toast({
+          title: "Failure",
+          description: "Error",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+          position: toastPosition,
+        }),
+
+      onSuccess: () =>
+        toast({
+          title: "Success",
+          description: "Post was created.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+          position: toastPosition,
+        }),
+    }
+  );
+
   // Get draft-post from localstorage und reset post form
   useEffect(() => {
     const storedData = localStorage.getItem("draft-post");
@@ -112,29 +119,6 @@ export default function AddPost() {
       localStorage.setItem("draft-post", storeData);
     }
   }, [content, title]);
-
-  useEffect(() => {
-    if (status === "error") {
-      toast({
-        title: "Failure",
-        description: "Error",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-        position: toastPosition,
-      });
-    }
-    if (status === "success") {
-      toast({
-        title: "Success",
-        description: "Post was created.",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-        position: toastPosition,
-      });
-    }
-  }, [status]);
 
   useEffect(() => {
     if (!isEmpty(coverInput)) {
@@ -161,13 +145,7 @@ export default function AddPost() {
         caption: data.caption,
         cover: cover as string,
       };
-      const result = await API.graphql(
-        graphqlOperation(createTodo, {
-          input: {
-            name: "My first todo!",
-          },
-        })
-      );
+      mutate(data);
     } else {
       router.push(`${POSTS_NEW_ROUTE}?step=${activeStep + 1}`);
     }
@@ -244,30 +222,8 @@ export default function AddPost() {
               <FormErrorMessage>{errors.mood && errors.mood.message}</FormErrorMessage>
             </FormControl>
           )}
+
           {activeStep === 2 && (
-            <>
-              <Heading textAlign={"center"} color={"teal"}>
-                Why are you feeling {mood} today?
-              </Heading>
-              <FormControl isInvalid={Boolean(errors.caption)} isRequired>
-                <Textarea
-                  id="caption"
-                  variant={"flushed"}
-                  placeholder={"Caption"}
-                  size={"lg"}
-                  {...register("caption", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 100,
-                      message: "Minimum length should be 100",
-                    },
-                  })}
-                />
-                <FormErrorMessage>{errors.caption && errors.caption.message}</FormErrorMessage>
-              </FormControl>
-            </>
-          )}
-          {activeStep === 3 && (
             <>
               <IconButton aria-label="Make story public" icon={<BsLock />} />
               <FormControl isInvalid={Boolean(errors.cover)} isRequired>
@@ -342,7 +298,7 @@ export default function AddPost() {
               mt={4}
               variant={mood ? "solid" : "ghost"}
               size={"xl"}
-              isLoading={status === "loading"}
+              isLoading={isLoading}
               type="submit"
             >
               {isLastStep ? "Publish" : "Next"}
