@@ -26,7 +26,6 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProsp): ReactE
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(withVoids(createEditor()) as any)), []);
-  console.log(value);
 
   const InitialState = [
     {

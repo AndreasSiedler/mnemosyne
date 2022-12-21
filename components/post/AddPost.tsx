@@ -61,15 +61,15 @@ export default function AddPost() {
         }),
       }).then((res) => res.json()),
     {
-      onSuccess(data) {
-        console.log("Succesful", { data });
-      },
-      onError(error) {
-        console.log("Failed", { error });
-      },
-      onSettled() {
-        console.log("Mutation completed.");
-      },
+      // onSuccess(data) {
+      //   console.log("Succesful", { data });
+      // },
+      // onError(error) {
+      //   console.log("Failed", { error });
+      // },
+      // onSettled() {
+      //   console.log("Mutation completed.");
+      // },
     }
   );
 
