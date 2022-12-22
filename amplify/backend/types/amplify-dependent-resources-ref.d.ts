@@ -5,5 +5,16 @@ export type AmplifyDependentResourcesAttributes = {
             "GraphQLAPIIdOutput": "string",
             "GraphQLAPIEndpointOutput": "string"
         }
+    },
+    "auth": {
+        "mnemosynee1e3b1be": {
+            "IdentityPoolId": "string",
+            "IdentityPoolName": "string",
+            "UserPoolId": "string",
+            "UserPoolArn": "string",
+            "UserPoolName": "string",
+            "AppClientIDWeb": "string",
+            "AppClientID": "string"
+        }
     }
 }
