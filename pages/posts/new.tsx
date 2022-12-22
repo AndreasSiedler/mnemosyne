@@ -7,7 +7,7 @@ export const POSTS_NEW_ROUTE = "/posts/new";
 
 const PostsPage: NextPage = () => {
   return (
-    <Layout title="Login">
+    <Layout title="Add Post">
       <AddPost />
     </Layout>
   );

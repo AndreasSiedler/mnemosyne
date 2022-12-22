@@ -51,7 +51,7 @@ export default function AddPost() {
   const [cover, setCover] = useState<string | ArrayBuffer | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | ArrayBuffer | null>(null);
 
-  const activeStep = router.query["step"] ? parseInt(router.query["step"] as string) : 0;
+  const activeStep = router.query["step"] ? parseInt(router.query["step"] as string) : 1;
   const isLastStep = activeStep === formSteps.length;
 
   const {
@@ -286,7 +286,7 @@ export default function AddPost() {
                 mt={4}
                 variant={"ghost"}
                 size={"xl"}
-                isLoading={status === "loading"}
+                isLoading={isLoading}
                 onClick={handleBack}
               >
                 Back
