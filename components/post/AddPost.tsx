@@ -27,6 +27,7 @@ import { BsLock } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
 import { POSTS_NEW_ROUTE } from "../../pages/posts/new";
 import { createEntry } from "../../graphql/mutations";
+import Calendar from "./Calendar";
 
 const formSteps = ["mood", "content"];
 
@@ -167,6 +168,7 @@ export default function AddPost() {
         height={"1"}
       />
       <Container maxW={"container.sm"} py={"52"} minH={"100vh"}>
+        <Calendar />
         <Center>
           <Icon as={BsLock} h={"10"} w={"10"} color={"gray.300"} />
         </Center>
