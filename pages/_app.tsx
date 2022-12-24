@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { AppProps } from "next/app";
+import AuthContext from "../context/AuthContext";
 import { ChakraProvider } from "@chakra-ui/react";
 import NextNProgress from "../components/nextnprogress";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -26,12 +27,14 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ChakraProvider resetCSS theme={theme}>
-        <NextNProgress />
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </QueryClientProvider>
+    <AuthContext>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider resetCSS theme={theme}>
+          <NextNProgress />
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </QueryClientProvider>
+    </AuthContext>
   );
 };
 
