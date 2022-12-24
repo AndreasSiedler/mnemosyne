@@ -1,81 +1,101 @@
-import React, { ReactElement, useEffect } from "react";
+import { ReactNode } from "react";
 import {
   Box,
   Flex,
-  Button,
-  useColorModeValue,
-  CircularProgress,
+  Avatar,
   HStack,
   Link,
+  IconButton,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  useDisclosure,
+  useColorModeValue,
+  Stack,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { loadUser, UserState } from "../../../store/user";
-import Logo from "../Logo";
-import ProfileMenu from "../../user/ProfileMenu";
-import { LOGIN_ROUTE } from "../../../pages/login";
-import { ColorModeButton } from "../ColorModeButton";
-import { ADMIN_NEW_ROOM_ROUTE } from "../../../pages/admin/rooms/new";
-import { ADMIN_NEW_VENTURE_ROUTE } from "../../../pages/admin/ventures/new";
+import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 
-/**
- * Renders a header
- * @return {ReactElement}
- */
-export default function Header(): ReactElement {
-  const dispatch = useAppDispatch();
-  const { status: userStatus }: UserState = useAppSelector((state) => state.user);
+const Links = ["Dashboard", "Projects", "Team"];
 
-  useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
+const NavLink = ({ children }: { children: ReactNode }) => (
+  <Link
+    px={2}
+    py={1}
+    rounded={"md"}
+    _hover={{
+      textDecoration: "none",
+      bg: useColorModeValue("gray.200", "gray.700"),
+    }}
+    href={"#"}
+  >
+    {children}
+  </Link>
+);
 
-  /**
-   * Renders account button or login button
-   * @param {String} status
-   * @return {ReactElement}
-   */
-  function rendersAccountButton(status: UserState["status"]) {
-    switch (status) {
-      case "userloaded":
-        return <ProfileMenu />;
-      case "loading":
-        return <CircularProgress size={"7"} isIndeterminate />;
-      default:
-        return (
-          <>
-            <NextLink href={LOGIN_ROUTE}>
-              <Link colorScheme={"teal"}>Login</Link>
-            </NextLink>
-            <NextLink href={ADMIN_NEW_VENTURE_ROUTE}>
-              <Button variant={"outline"} colorScheme={"teal"}>
-                Add Venture
-              </Button>
-            </NextLink>
-          </>
-        );
-    }
-  }
+export default function Header() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
-      <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-        <Box>
-          <Logo />
-        </Box>
+    <>
+      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+          <IconButton
+            size={"md"}
+            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            aria-label={"Open Menu"}
+            display={{ md: "none" }}
+            onClick={isOpen ? onClose : onOpen}
+          />
+          <HStack spacing={8} alignItems={"center"}>
+            <Box>Logo</Box>
+            <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
+              {Links.map((link) => (
+                <NavLink key={link}>{link}</NavLink>
+              ))}
+            </HStack>
+          </HStack>
+          <Flex alignItems={"center"}>
+            <Button
+              variant={"solid"}
+              colorScheme={"teal"}
+              size={"sm"}
+              mr={4}
+              leftIcon={<AddIcon />}
+            >
+              Action
+            </Button>
+            <Menu>
+              <MenuButton as={Button} rounded={"full"} variant={"link"} cursor={"pointer"} minW={0}>
+                <Avatar
+                  size={"sm"}
+                  src={
+                    "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
+                  }
+                />
+              </MenuButton>
+              <MenuList>
+                <MenuItem>Link 1</MenuItem>
+                <MenuItem>Link 2</MenuItem>
+                <MenuDivider />
+                <MenuItem>Link 3</MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
+        </Flex>
 
-        <HStack spacing={5}>
-          {userStatus === "userloaded" && (
-            <NextLink href={ADMIN_NEW_ROOM_ROUTE}>
-              <Button variant={"outline"} colorScheme={"teal"}>
-                Create Room
-              </Button>
-            </NextLink>
-          )}
-          <ColorModeButton />
-          {rendersAccountButton(userStatus)}
-        </HStack>
-      </Flex>
-    </Box>
+        {isOpen ? (
+          <Box pb={4} display={{ md: "none" }}>
+            <Stack as={"nav"} spacing={4}>
+              {Links.map((link) => (
+                <NavLink key={link}>{link}</NavLink>
+              ))}
+            </Stack>
+          </Box>
+        ) : null}
+      </Box>
+    </>
   );
 }

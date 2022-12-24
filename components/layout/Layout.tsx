@@ -17,7 +17,7 @@ const Layout = ({ children, title = "Book Best Hotels for your Holiday" }: Layou
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
 
-      {/* <Header /> */}
+      <Header />
       {children}
       {/* <Footer /> */}
     </>
