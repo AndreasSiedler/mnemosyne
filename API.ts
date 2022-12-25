@@ -120,13 +120,23 @@ export type DeleteEntryInput = {
   id: string,
 };
 
-export type ModelTodoFilterInput = {
-  id?: ModelIDInput | null,
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  and?: Array< ModelTodoFilterInput | null > | null,
-  or?: Array< ModelTodoFilterInput | null > | null,
-  not?: ModelTodoFilterInput | null,
+export type CreateImageInput = {
+  id?: string | null,
+  postId?: string | null,
+  fullSize: S3ObjectInput,
+};
+
+export type S3ObjectInput = {
+  region: string,
+  bucket: string,
+  key: string,
+};
+
+export type ModelImageConditionInput = {
+  postId?: ModelIDInput | null,
+  and?: Array< ModelImageConditionInput | null > | null,
+  or?: Array< ModelImageConditionInput | null > | null,
+  not?: ModelImageConditionInput | null,
 };
 
 export type ModelIDInput = {
@@ -143,6 +153,82 @@ export type ModelIDInput = {
   attributeExists?: boolean | null,
   attributeType?: ModelAttributeTypes | null,
   size?: ModelSizeInput | null,
+};
+
+export type Image = {
+  __typename: "Image",
+  id: string,
+  postId?: string | null,
+  fullSize: S3Object,
+  createdAt: string,
+  updatedAt: string,
+  owner?: string | null,
+};
+
+export type S3Object = {
+  __typename: "S3Object",
+  region: string,
+  bucket: string,
+  key: string,
+};
+
+export type UpdateImageInput = {
+  id: string,
+  postId?: string | null,
+  fullSize?: S3ObjectInput | null,
+};
+
+export type DeleteImageInput = {
+  id: string,
+};
+
+export type CreatePostInput = {
+  id?: string | null,
+  content?: string | null,
+  owner?: string | null,
+};
+
+export type ModelPostConditionInput = {
+  content?: ModelStringInput | null,
+  owner?: ModelIDInput | null,
+  and?: Array< ModelPostConditionInput | null > | null,
+  or?: Array< ModelPostConditionInput | null > | null,
+  not?: ModelPostConditionInput | null,
+};
+
+export type Post = {
+  __typename: "Post",
+  id: string,
+  content?: string | null,
+  images?: ModelImageConnection | null,
+  owner?: string | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type ModelImageConnection = {
+  __typename: "ModelImageConnection",
+  items:  Array<Image | null >,
+  nextToken?: string | null,
+};
+
+export type UpdatePostInput = {
+  id: string,
+  content?: string | null,
+  owner?: string | null,
+};
+
+export type DeletePostInput = {
+  id: string,
+};
+
+export type ModelTodoFilterInput = {
+  id?: ModelIDInput | null,
+  name?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  and?: Array< ModelTodoFilterInput | null > | null,
+  or?: Array< ModelTodoFilterInput | null > | null,
+  not?: ModelTodoFilterInput | null,
 };
 
 export type ModelTodoConnection = {
@@ -163,6 +249,29 @@ export type ModelEntryFilterInput = {
 export type ModelEntryConnection = {
   __typename: "ModelEntryConnection",
   items:  Array<Entry | null >,
+  nextToken?: string | null,
+};
+
+export type ModelImageFilterInput = {
+  id?: ModelIDInput | null,
+  postId?: ModelIDInput | null,
+  and?: Array< ModelImageFilterInput | null > | null,
+  or?: Array< ModelImageFilterInput | null > | null,
+  not?: ModelImageFilterInput | null,
+};
+
+export type ModelPostFilterInput = {
+  id?: ModelIDInput | null,
+  content?: ModelStringInput | null,
+  owner?: ModelIDInput | null,
+  and?: Array< ModelPostFilterInput | null > | null,
+  or?: Array< ModelPostFilterInput | null > | null,
+  not?: ModelPostFilterInput | null,
+};
+
+export type ModelPostConnection = {
+  __typename: "ModelPostConnection",
+  items:  Array<Post | null >,
   nextToken?: string | null,
 };
 
@@ -222,6 +331,20 @@ export type ModelSubscriptionIntInput = {
   between?: Array< number | null > | null,
   in?: Array< number | null > | null,
   notIn?: Array< number | null > | null,
+};
+
+export type ModelSubscriptionImageFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  postId?: ModelSubscriptionIDInput | null,
+  and?: Array< ModelSubscriptionImageFilterInput | null > | null,
+  or?: Array< ModelSubscriptionImageFilterInput | null > | null,
+};
+
+export type ModelSubscriptionPostFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  content?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionPostFilterInput | null > | null,
+  or?: Array< ModelSubscriptionPostFilterInput | null > | null,
 };
 
 export type CreateTodoMutationVariables = {
@@ -320,6 +443,156 @@ export type DeleteEntryMutation = {
   } | null,
 };
 
+export type CreateImageMutationVariables = {
+  input: CreateImageInput,
+  condition?: ModelImageConditionInput | null,
+};
+
+export type CreateImageMutation = {
+  createImage?:  {
+    __typename: "Image",
+    id: string,
+    postId?: string | null,
+    fullSize:  {
+      __typename: "S3Object",
+      region: string,
+      bucket: string,
+      key: string,
+    },
+    createdAt: string,
+    updatedAt: string,
+    owner?: string | null,
+  } | null,
+};
+
+export type UpdateImageMutationVariables = {
+  input: UpdateImageInput,
+  condition?: ModelImageConditionInput | null,
+};
+
+export type UpdateImageMutation = {
+  updateImage?:  {
+    __typename: "Image",
+    id: string,
+    postId?: string | null,
+    fullSize:  {
+      __typename: "S3Object",
+      region: string,
+      bucket: string,
+      key: string,
+    },
+    createdAt: string,
+    updatedAt: string,
+    owner?: string | null,
+  } | null,
+};
+
+export type DeleteImageMutationVariables = {
+  input: DeleteImageInput,
+  condition?: ModelImageConditionInput | null,
+};
+
+export type DeleteImageMutation = {
+  deleteImage?:  {
+    __typename: "Image",
+    id: string,
+    postId?: string | null,
+    fullSize:  {
+      __typename: "S3Object",
+      region: string,
+      bucket: string,
+      key: string,
+    },
+    createdAt: string,
+    updatedAt: string,
+    owner?: string | null,
+  } | null,
+};
+
+export type CreatePostMutationVariables = {
+  input: CreatePostInput,
+  condition?: ModelPostConditionInput | null,
+};
+
+export type CreatePostMutation = {
+  createPost?:  {
+    __typename: "Post",
+    id: string,
+    content?: string | null,
+    images?:  {
+      __typename: "ModelImageConnection",
+      items:  Array< {
+        __typename: "Image",
+        id: string,
+        postId?: string | null,
+        createdAt: string,
+        updatedAt: string,
+        owner?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
+    owner?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdatePostMutationVariables = {
+  input: UpdatePostInput,
+  condition?: ModelPostConditionInput | null,
+};
+
+export type UpdatePostMutation = {
+  updatePost?:  {
+    __typename: "Post",
+    id: string,
+    content?: string | null,
+    images?:  {
+      __typename: "ModelImageConnection",
+      items:  Array< {
+        __typename: "Image",
+        id: string,
+        postId?: string | null,
+        createdAt: string,
+        updatedAt: string,
+        owner?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
+    owner?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeletePostMutationVariables = {
+  input: DeletePostInput,
+  condition?: ModelPostConditionInput | null,
+};
+
+export type DeletePostMutation = {
+  deletePost?:  {
+    __typename: "Post",
+    id: string,
+    content?: string | null,
+    images?:  {
+      __typename: "ModelImageConnection",
+      items:  Array< {
+        __typename: "Image",
+        id: string,
+        postId?: string | null,
+        createdAt: string,
+        updatedAt: string,
+        owner?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
+    owner?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type GetTodoQueryVariables = {
   id: string,
 };
@@ -385,6 +658,106 @@ export type ListEntriesQuery = {
       id: string,
       mood: number,
       content?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetImageQueryVariables = {
+  id: string,
+};
+
+export type GetImageQuery = {
+  getImage?:  {
+    __typename: "Image",
+    id: string,
+    postId?: string | null,
+    fullSize:  {
+      __typename: "S3Object",
+      region: string,
+      bucket: string,
+      key: string,
+    },
+    createdAt: string,
+    updatedAt: string,
+    owner?: string | null,
+  } | null,
+};
+
+export type ListImagesQueryVariables = {
+  filter?: ModelImageFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListImagesQuery = {
+  listImages?:  {
+    __typename: "ModelImageConnection",
+    items:  Array< {
+      __typename: "Image",
+      id: string,
+      postId?: string | null,
+      fullSize:  {
+        __typename: "S3Object",
+        region: string,
+        bucket: string,
+        key: string,
+      },
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetPostQueryVariables = {
+  id: string,
+};
+
+export type GetPostQuery = {
+  getPost?:  {
+    __typename: "Post",
+    id: string,
+    content?: string | null,
+    images?:  {
+      __typename: "ModelImageConnection",
+      items:  Array< {
+        __typename: "Image",
+        id: string,
+        postId?: string | null,
+        createdAt: string,
+        updatedAt: string,
+        owner?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
+    owner?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListPostsQueryVariables = {
+  filter?: ModelPostFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPostsQuery = {
+  listPosts?:  {
+    __typename: "ModelPostConnection",
+    items:  Array< {
+      __typename: "Post",
+      id: string,
+      content?: string | null,
+      images?:  {
+        __typename: "ModelImageConnection",
+        nextToken?: string | null,
+      } | null,
+      owner?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -477,6 +850,156 @@ export type OnDeleteEntrySubscription = {
     id: string,
     mood: number,
     content?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateImageSubscriptionVariables = {
+  filter?: ModelSubscriptionImageFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnCreateImageSubscription = {
+  onCreateImage?:  {
+    __typename: "Image",
+    id: string,
+    postId?: string | null,
+    fullSize:  {
+      __typename: "S3Object",
+      region: string,
+      bucket: string,
+      key: string,
+    },
+    createdAt: string,
+    updatedAt: string,
+    owner?: string | null,
+  } | null,
+};
+
+export type OnUpdateImageSubscriptionVariables = {
+  filter?: ModelSubscriptionImageFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnUpdateImageSubscription = {
+  onUpdateImage?:  {
+    __typename: "Image",
+    id: string,
+    postId?: string | null,
+    fullSize:  {
+      __typename: "S3Object",
+      region: string,
+      bucket: string,
+      key: string,
+    },
+    createdAt: string,
+    updatedAt: string,
+    owner?: string | null,
+  } | null,
+};
+
+export type OnDeleteImageSubscriptionVariables = {
+  filter?: ModelSubscriptionImageFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnDeleteImageSubscription = {
+  onDeleteImage?:  {
+    __typename: "Image",
+    id: string,
+    postId?: string | null,
+    fullSize:  {
+      __typename: "S3Object",
+      region: string,
+      bucket: string,
+      key: string,
+    },
+    createdAt: string,
+    updatedAt: string,
+    owner?: string | null,
+  } | null,
+};
+
+export type OnCreatePostSubscriptionVariables = {
+  filter?: ModelSubscriptionPostFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnCreatePostSubscription = {
+  onCreatePost?:  {
+    __typename: "Post",
+    id: string,
+    content?: string | null,
+    images?:  {
+      __typename: "ModelImageConnection",
+      items:  Array< {
+        __typename: "Image",
+        id: string,
+        postId?: string | null,
+        createdAt: string,
+        updatedAt: string,
+        owner?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
+    owner?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdatePostSubscriptionVariables = {
+  filter?: ModelSubscriptionPostFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnUpdatePostSubscription = {
+  onUpdatePost?:  {
+    __typename: "Post",
+    id: string,
+    content?: string | null,
+    images?:  {
+      __typename: "ModelImageConnection",
+      items:  Array< {
+        __typename: "Image",
+        id: string,
+        postId?: string | null,
+        createdAt: string,
+        updatedAt: string,
+        owner?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
+    owner?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeletePostSubscriptionVariables = {
+  filter?: ModelSubscriptionPostFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnDeletePostSubscription = {
+  onDeletePost?:  {
+    __typename: "Post",
+    id: string,
+    content?: string | null,
+    images?:  {
+      __typename: "ModelImageConnection",
+      items:  Array< {
+        __typename: "Image",
+        id: string,
+        postId?: string | null,
+        createdAt: string,
+        updatedAt: string,
+        owner?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
+    owner?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,

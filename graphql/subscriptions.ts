@@ -68,3 +68,132 @@ export const onDeleteEntry = /* GraphQL */ `
     }
   }
 `;
+export const onCreateImage = /* GraphQL */ `
+  subscription OnCreateImage(
+    $filter: ModelSubscriptionImageFilterInput
+    $owner: String
+  ) {
+    onCreateImage(filter: $filter, owner: $owner) {
+      id
+      postId
+      fullSize {
+        region
+        bucket
+        key
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onUpdateImage = /* GraphQL */ `
+  subscription OnUpdateImage(
+    $filter: ModelSubscriptionImageFilterInput
+    $owner: String
+  ) {
+    onUpdateImage(filter: $filter, owner: $owner) {
+      id
+      postId
+      fullSize {
+        region
+        bucket
+        key
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onDeleteImage = /* GraphQL */ `
+  subscription OnDeleteImage(
+    $filter: ModelSubscriptionImageFilterInput
+    $owner: String
+  ) {
+    onDeleteImage(filter: $filter, owner: $owner) {
+      id
+      postId
+      fullSize {
+        region
+        bucket
+        key
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onCreatePost = /* GraphQL */ `
+  subscription OnCreatePost(
+    $filter: ModelSubscriptionPostFilterInput
+    $owner: String
+  ) {
+    onCreatePost(filter: $filter, owner: $owner) {
+      id
+      content
+      images {
+        items {
+          id
+          postId
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
+      owner
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdatePost = /* GraphQL */ `
+  subscription OnUpdatePost(
+    $filter: ModelSubscriptionPostFilterInput
+    $owner: String
+  ) {
+    onUpdatePost(filter: $filter, owner: $owner) {
+      id
+      content
+      images {
+        items {
+          id
+          postId
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
+      owner
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeletePost = /* GraphQL */ `
+  subscription OnDeletePost(
+    $filter: ModelSubscriptionPostFilterInput
+    $owner: String
+  ) {
+    onDeletePost(filter: $filter, owner: $owner) {
+      id
+      content
+      images {
+        items {
+          id
+          postId
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
+      owner
+      createdAt
+      updatedAt
+    }
+  }
+`;

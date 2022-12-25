@@ -1,5 +1,11 @@
 {
   "AppSyncApiName": "mnemosyne",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authmnemosynee1e3b1be",
+      "Outputs.UserPoolId"
+    ]
+  }
 }

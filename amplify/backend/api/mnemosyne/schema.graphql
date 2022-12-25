@@ -14,3 +14,30 @@ type Entry @model {
   mood: Int!
   content: AWSJSON
 }
+
+type S3Object {
+  region: String!
+  bucket: String!
+  key: String!
+}
+
+type Image
+  @model
+  @auth(
+    rules: [{ allow: private, operations: [] }, { allow: public, operations: [] }, { allow: owner }]
+  ) {
+  id: ID!
+  postId: ID @index(name: "byPost")
+  fullSize: S3Object!
+}
+
+type Post
+  @model
+  @auth(
+    rules: [{ allow: private, operations: [] }, { allow: public, operations: [] }, { allow: owner }]
+  ) {
+  id: ID!
+  content: AWSJSON
+  images: [Image] @hasMany(indexName: "byPost", fields: ["id"])
+  owner: ID
+}

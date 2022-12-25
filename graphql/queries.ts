@@ -60,3 +60,84 @@ export const listEntries = /* GraphQL */ `
     }
   }
 `;
+export const getImage = /* GraphQL */ `
+  query GetImage($id: ID!) {
+    getImage(id: $id) {
+      id
+      postId
+      fullSize {
+        region
+        bucket
+        key
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listImages = /* GraphQL */ `
+  query ListImages(
+    $filter: ModelImageFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listImages(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        postId
+        fullSize {
+          region
+          bucket
+          key
+        }
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;
+export const getPost = /* GraphQL */ `
+  query GetPost($id: ID!) {
+    getPost(id: $id) {
+      id
+      content
+      images {
+        items {
+          id
+          postId
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
+      owner
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listPosts = /* GraphQL */ `
+  query ListPosts(
+    $filter: ModelPostFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPosts(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        content
+        images {
+          nextToken
+        }
+        owner
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
