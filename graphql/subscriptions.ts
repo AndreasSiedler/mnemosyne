@@ -143,6 +143,7 @@ export const onCreatePost = /* GraphQL */ `
         }
         nextToken
       }
+      date
       owner
       createdAt
       updatedAt
@@ -167,6 +168,7 @@ export const onUpdatePost = /* GraphQL */ `
         }
         nextToken
       }
+      date
       owner
       createdAt
       updatedAt
@@ -191,6 +193,7 @@ export const onDeletePost = /* GraphQL */ `
         }
         nextToken
       }
+      date
       owner
       createdAt
       updatedAt

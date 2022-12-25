@@ -185,11 +185,13 @@ export type DeleteImageInput = {
 export type CreatePostInput = {
   id?: string | null,
   content?: string | null,
+  date?: string | null,
   owner?: string | null,
 };
 
 export type ModelPostConditionInput = {
   content?: ModelStringInput | null,
+  date?: ModelStringInput | null,
   owner?: ModelIDInput | null,
   and?: Array< ModelPostConditionInput | null > | null,
   or?: Array< ModelPostConditionInput | null > | null,
@@ -201,6 +203,7 @@ export type Post = {
   id: string,
   content?: string | null,
   images?: ModelImageConnection | null,
+  date?: string | null,
   owner?: string | null,
   createdAt: string,
   updatedAt: string,
@@ -215,6 +218,7 @@ export type ModelImageConnection = {
 export type UpdatePostInput = {
   id: string,
   content?: string | null,
+  date?: string | null,
   owner?: string | null,
 };
 
@@ -263,6 +267,7 @@ export type ModelImageFilterInput = {
 export type ModelPostFilterInput = {
   id?: ModelIDInput | null,
   content?: ModelStringInput | null,
+  date?: ModelStringInput | null,
   owner?: ModelIDInput | null,
   and?: Array< ModelPostFilterInput | null > | null,
   or?: Array< ModelPostFilterInput | null > | null,
@@ -343,6 +348,7 @@ export type ModelSubscriptionImageFilterInput = {
 export type ModelSubscriptionPostFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   content?: ModelSubscriptionStringInput | null,
+  date?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPostFilterInput | null > | null,
   or?: Array< ModelSubscriptionPostFilterInput | null > | null,
 };
@@ -531,6 +537,7 @@ export type CreatePostMutation = {
       } | null >,
       nextToken?: string | null,
     } | null,
+    date?: string | null,
     owner?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -559,6 +566,7 @@ export type UpdatePostMutation = {
       } | null >,
       nextToken?: string | null,
     } | null,
+    date?: string | null,
     owner?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -587,6 +595,7 @@ export type DeletePostMutation = {
       } | null >,
       nextToken?: string | null,
     } | null,
+    date?: string | null,
     owner?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -734,6 +743,7 @@ export type GetPostQuery = {
       } | null >,
       nextToken?: string | null,
     } | null,
+    date?: string | null,
     owner?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -757,6 +767,7 @@ export type ListPostsQuery = {
         __typename: "ModelImageConnection",
         nextToken?: string | null,
       } | null,
+      date?: string | null,
       owner?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -943,6 +954,7 @@ export type OnCreatePostSubscription = {
       } | null >,
       nextToken?: string | null,
     } | null,
+    date?: string | null,
     owner?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -971,6 +983,7 @@ export type OnUpdatePostSubscription = {
       } | null >,
       nextToken?: string | null,
     } | null,
+    date?: string | null,
     owner?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -999,6 +1012,7 @@ export type OnDeletePostSubscription = {
       } | null >,
       nextToken?: string | null,
     } | null,
+    date?: string | null,
     owner?: string | null,
     createdAt: string,
     updatedAt: string,

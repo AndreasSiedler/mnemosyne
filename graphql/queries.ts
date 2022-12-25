@@ -114,6 +114,7 @@ export const getPost = /* GraphQL */ `
         }
         nextToken
       }
+      date
       owner
       createdAt
       updatedAt
@@ -133,6 +134,7 @@ export const listPosts = /* GraphQL */ `
         images {
           nextToken
         }
+        date
         owner
         createdAt
         updatedAt
