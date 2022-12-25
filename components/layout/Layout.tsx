@@ -19,7 +19,7 @@ const Layout = ({ children, title = "Book Best Hotels for your Holiday" }: Layou
 
       <Header />
       {children}
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };

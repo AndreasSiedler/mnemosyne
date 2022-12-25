@@ -6,11 +6,7 @@ import AddPost from "../components/post/AddPost";
 export const POSTS_NEW_ROUTE = "/posts/new";
 
 const PostsPage: NextPage = () => {
-  return (
-    <Layout title="Add Post">
-      <AddPost />
-    </Layout>
-  );
+  return <Layout title="Home">Home</Layout>;
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
