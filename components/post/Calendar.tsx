@@ -1,5 +1,4 @@
-import { Box, HStack, useRadio, useRadioGroup } from "@chakra-ui/react";
-import { map } from "lodash";
+import { Box, Heading, HStack, useRadio, useRadioGroup } from "@chakra-ui/react";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
@@ -18,7 +17,7 @@ function RadioCard(props: any) {
         {...checkbox}
         cursor="pointer"
         borderWidth="1px"
-        borderRadius="md"
+        borderRadius="full"
         _checked={{
           bg: "teal",
           color: "white",
@@ -41,33 +40,38 @@ type Props = {};
 export default function Calendar({}: Props) {
   const router = useRouter();
   const currentDate = moment();
+
+  const { date } = router.query;
   const weekStart = currentDate.clone().startOf("isoWeek");
+
   var days = [];
   for (var i = 0; i <= 6; i++) {
-    days.push(moment(weekStart).add(i, "days").toString());
+    days.push(moment(weekStart).add(i, "days").format("YYYY-MM-DD"));
   }
 
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: "framework",
-    defaultValue: "react",
+  const { getRootProps, getRadioProps, value } = useRadioGroup({
+    name: "date",
+    defaultValue: date as string,
     onChange: (date) => router.push({ pathname: "posts", query: { date: date } }),
   });
 
   const group = getRootProps();
 
   return (
-    <HStack {...group}>
-      {days.map((value) => {
-        const radio = getRadioProps({ value });
-        return (
-          <RadioCard key={value} {...radio}>
-            {moment(value).format("DD")}
-          </RadioCard>
-        );
-      })}
-    </HStack>
+    <>
+      <Heading textAlign={"center"} as="h1" size={"md"}>
+        {moment(value).format("DD.MM.YYYY")}
+      </Heading>
+      <HStack {...group} justify={"space-between"} mt={5}>
+        {days.map((value) => {
+          const radio = getRadioProps({ value });
+          return (
+            <RadioCard key={value} {...radio}>
+              {moment(value).format("DD")}
+            </RadioCard>
+          );
+        })}
+      </HStack>
+    </>
   );
-}
-function getRootProps() {
-  throw new Error("Function not implemented.");
 }

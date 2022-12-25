@@ -15,7 +15,6 @@ import { RichTextEditor } from "../texteditor/RichtextEditor";
 import { useRouter } from "next/router";
 import { BsLock } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
-import { POSTS_NEW_ROUTE } from "../../pages/posts/new";
 import { createPost } from "../../graphql/mutations";
 import ImageManager from "../ImageManager";
 import { Image as TImage } from "../../API";
@@ -37,6 +36,7 @@ export default function AddPost() {
   const router = useRouter();
   const toast = useToast();
 
+  const { date } = router.query;
   const activeStep = router.query["step"] ? parseInt(router.query["step"] as string) : 1;
   const isLastStep = activeStep === formSteps.length;
 
@@ -51,12 +51,14 @@ export default function AddPost() {
 
   const { mutate, isLoading } = useMutation(
     (data: ICreatePostInput) => {
+      console.log(date);
       return API.graphql<any>({
         query: createPost,
         authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
         variables: {
           input: {
             content: JSON.stringify(data.content),
+            date: date,
           },
         },
       });
@@ -96,11 +98,7 @@ export default function AddPost() {
    * @param {ICreatePostInput} data
    */
   async function onSubmit(data: ICreatePostInput): Promise<void> {
-    if (isLastStep) {
-      mutate(data);
-    } else {
-      router.push(`${POSTS_NEW_ROUTE}?step=${activeStep + 1}`);
-    }
+    mutate(data);
   }
 
   return (
