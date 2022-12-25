@@ -2,8 +2,8 @@ import { Storage } from "aws-amplify";
 import React, { ReactElement } from "react";
 import { Skeleton } from "@chakra-ui/skeleton";
 import useSWR from "swr";
-import ErrorMessage from "../ErrorMessage";
 import { Image } from "@chakra-ui/image";
+import { Alert } from "@chakra-ui/react";
 
 interface DynamicImageProps {
   imageKey: string;
@@ -17,7 +17,7 @@ interface DynamicImageProps {
 export default function DynamicImage({ imageKey }: DynamicImageProps): ReactElement {
   const { data, error } = useSWR(`/dynamicImage/${imageKey}`, () => fetcher(imageKey));
 
-  if (error) return <ErrorMessage error="Something went wrong" />;
+  if (error) return <Alert>Something went wrong</Alert>;
   if (!data) return <Skeleton />;
   return <Image height="200px" width="100%" objectFit="cover" src={data} />;
 }
