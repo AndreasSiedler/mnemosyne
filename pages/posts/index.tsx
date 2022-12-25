@@ -11,14 +11,18 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import Calendar from "../../components/post/Calendar";
-import AddPost from "../../components/post/AddPost";
+import dynamic from "next/dynamic";
 
 const PostsPage: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const DynamicAddPostForm = dynamic(() => import("../../components/post/AddPost"), {
+    loading: () => <Spinner />,
+  });
 
   return (
     <>
@@ -36,7 +40,7 @@ const PostsPage: NextPage = () => {
           <ModalHeader>Modal Title</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <AddPost />
+            <DynamicAddPostForm />
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>Close</Button>
