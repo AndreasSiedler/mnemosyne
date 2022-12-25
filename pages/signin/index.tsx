@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
-import { DataStore } from "@aws-amplify/datastore";
 
 import {
   FormErrorMessage,
@@ -13,9 +12,7 @@ import {
   Stack,
   useColorModeValue,
   Heading,
-  Link,
   Box,
-  Text,
   useToast,
 } from "@chakra-ui/react";
 import { Auth } from "aws-amplify";
@@ -45,8 +42,8 @@ export default function Login(): ReactElement {
     try {
       await signInWithEmailAndPassword(values);
       toast({
-        title: "Successfully signed in.",
-        description: "We've created your account for you.",
+        title: "Welcome back",
+        description: "Your were successfully signed in.",
         status: "success",
         duration: 9000,
         isClosable: true,
@@ -91,9 +88,6 @@ export default function Login(): ReactElement {
       <Stack spacing={8} mx={"auto"} minW={["100%", 500]} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"}>Sign in to your account</Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool <Link color={"blue.400"}>features</Link> ✌️
-          </Text>
         </Stack>
         <Box rounded={"lg"} bg={useColorModeValue("white", "gray.700")} boxShadow={"lg"} p={8}>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
