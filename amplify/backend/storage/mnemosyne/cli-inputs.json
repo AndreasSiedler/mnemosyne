@@ -1,0 +1,14 @@
+{
+  "resourceName": "mnemosyne",
+  "policyUUID": "5574c707",
+  "bucketName": "media",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
