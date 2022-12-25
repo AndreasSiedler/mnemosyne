@@ -9,7 +9,7 @@ import { CreateImageInput } from "../../../API";
 import { graphqlOperation } from "aws-amplify";
 import { uuid } from "uuidv4";
 import { useFormContext } from "react-hook-form";
-import { Space } from "../../../API";
+import { ICreatePostInput } from "../../post/AddPost";
 
 interface Props {
   file: File;
@@ -31,7 +31,7 @@ export default function SingleFileUploadWithProgress({
 }: Props): ReactElement {
   // Hooks
   const toast = useToast();
-  const { getValues } = useFormContext<Space>();
+  // const { getValues } = useFormContext<ICreatePostInput>();
 
   // Local State
   const [progress, setProgres] = useState(0);
@@ -44,27 +44,27 @@ export default function SingleFileUploadWithProgress({
       const imageId = uuid();
       const extension = file.name.substr(file.name.lastIndexOf(".") + 1);
       const key = `images/${imageId}.${extension}`;
-      const values = getValues();
+      // const values = getValues();
 
       // Upload image file to s3 bucket
-      await Storage.put(key, file, {
-        contentType: "image/png", // contentType is optional
-        progressCallback(progress) {
-          const percentage = (progress.loaded / progress.total) * 100;
-          setProgres(Math.round(percentage));
-        },
-      });
+      // await Storage.put(key, file, {
+      //   contentType: "image/png", // contentType is optional
+      //   progressCallback(progress) {
+      //     const percentage = (progress.loaded / progress.total) * 100;
+      //     setProgres(Math.round(percentage));
+      //   },
+      // });
 
-      // Save image entity to db with resulted storage key
-      const createImageInput: CreateImageInput = {
-        spaceID: values.id,
-        fullSize: {
-          region: "eu-central-1",
-          bucket: "amplify-sharedventure-dev-151735-deployment",
-          key: key,
-        },
-      };
-      await API.graphql(graphqlOperation(createImageMutation, { input: createImageInput }));
+      // // Save image entity to db with resulted storage key
+      // const createImageInput: CreateImageInput = {
+      //   postID: values.,
+      //   fullSize: {
+      //     region: "eu-central-1",
+      //     bucket: "amplify-sharedventure-dev-151735-deployment",
+      //     key: key,
+      //   },
+      // };
+      // await API.graphql(graphqlOperation(createImageMutation, { input: createImageInput }));
 
       // Update loading state
       setLoading(false);

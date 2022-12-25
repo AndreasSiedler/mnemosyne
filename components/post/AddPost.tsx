@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import { BsLock } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
 import { POSTS_NEW_ROUTE } from "../../pages/posts/new";
-import { createEntry } from "../../graphql/mutations";
+import { createEntry, createPost } from "../../graphql/mutations";
 import Calendar from "./Calendar";
 import ImageManager from "../ImageManager";
 import { Image as TImage } from "../../API";
@@ -32,11 +32,7 @@ const formSteps = ["mood", "content"];
 
 export type ICreatePostInput = {
   images?: TImage[];
-  mood: number;
-  title: string;
-  caption: string;
   content: any;
-  cover?: FileList;
 };
 
 /**
@@ -65,17 +61,14 @@ export default function AddPost() {
     formState: { errors },
   } = useForm<ICreatePostInput>();
 
-  const mood = watch("mood");
-  const coverInput = watch("cover");
+  const images = watch("images");
   const content = watch("content");
-  const title = watch("title");
 
   const { mutate, isLoading } = useMutation(
     (data: ICreatePostInput) => {
       return API.graphql<any>(
-        graphqlOperation(createEntry, {
+        graphqlOperation(createPost, {
           input: {
-            mood: data.mood,
             content: JSON.stringify(data.content),
           },
         })
@@ -111,41 +104,15 @@ export default function AddPost() {
     reset(JSON.parse(storedData));
   }, []);
 
-  // Set draft-post to localstorage when form changes
-  useEffect(() => {
-    if (title || content) {
-      const storeData = JSON.stringify({
-        title: title,
-        content: content,
-      });
-      localStorage.setItem("draft-post", storeData);
-    }
-  }, [content, title]);
-
-  useEffect(() => {
-    if (!isEmpty(coverInput)) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setCover(reader.result);
-          setCoverPreview(reader.result);
-        }
-      };
-      reader.readAsDataURL(coverInput![0]);
-    }
-  }, [coverInput]);
-
   /**
    * Create post with data
    * @param {ICreatePostInput} data
-   * @return {void<CognitoUser>}
    */
   async function handleFurther(data: ICreatePostInput): Promise<void> {
     if (isLastStep) {
       const postData: any = {
-        title: data.title,
-        caption: data.caption,
-        cover: cover as string,
+        images: data.images,
+        content: data.content,
       };
       mutate(data);
     } else {
@@ -168,104 +135,45 @@ export default function AddPost() {
         colorScheme="teal"
         height={"1"}
       />
-      <Container maxW={"container.sm"} py={"52"} minH={"100vh"}>
-        <Calendar />
+      <Container maxW={"container.sm"} py={"10"} minH={"100vh"}>
         <Center>
           <Icon as={BsLock} h={"10"} w={"10"} color={"gray.300"} />
         </Center>
         <form onSubmit={handleSubmit(handleFurther)} noValidate>
-          {activeStep === 1 && (
-            <FormControl isInvalid={Boolean(errors.images)} isRequired>
-              <ImageManager
-                {...register("images")}
-                images={getValues("images") ?? []}
-                // onChange={(files: CreateImageInput[]) => {
-                //   setValue(name, files);
-                // }}
-              />
-              <FormErrorMessage>{errors.images && errors.images.message}</FormErrorMessage>
-            </FormControl>
-          )}
+          <FormControl isInvalid={Boolean(errors.images)} isRequired>
+            <ImageManager
+              {...register("images")}
+              images={getValues("images") ?? []}
+              // onChange={(files: CreateImageInput[]) => {
+              //   setValue(name, files);
+              // }}
+            />
+            <FormErrorMessage>{errors.images && errors.images.message}</FormErrorMessage>
+          </FormControl>
 
-          {activeStep === 2 && (
-            <>
-              <IconButton aria-label="Make story public" icon={<BsLock />} />
-              <FormControl isInvalid={Boolean(errors.cover)} isRequired>
-                <Image width={"40"} src={coverPreview ? (coverPreview as string) : undefined} />
-                <Button onClick={onClickUploadFile} size={"xl"}>
-                  Upload cover
-                </Button>
-                <Controller
-                  control={control}
-                  name="cover"
-                  render={({ field: { onChange } }) => (
-                    <Input
-                      hidden
-                      id="cover"
-                      type="file"
-                      placeholder="Cover"
-                      onChange={(value) => onChange(value.target.files)}
-                      ref={uploadInputRef}
-                    />
-                  )}
-                />
-                <FormErrorMessage>{errors.cover && errors.cover.message}</FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={Boolean(errors.title)} isRequired>
-                <Input
-                  id="title"
-                  type={"text"}
-                  placeholder="Title"
-                  size={"lg"}
-                  variant={"flushed"}
-                  {...register("title", {
-                    required: "This is required",
-                    minLength: {
-                      value: 6,
-                      message: "Minimum length should be 6",
-                    },
-                  })}
-                />
-                <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
-              </FormControl>
+          <FormControl mt={"10"} isInvalid={Boolean(errors.content)} isRequired>
+            <Controller
+              control={control}
+              rules={{
+                required: "This is required",
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <RichTextEditor value={value} onChange={onChange} />
+              )}
+              name="content"
+            />
+          </FormControl>
 
-              <FormControl isInvalid={Boolean(errors.content)} isRequired>
-                <Controller
-                  control={control}
-                  rules={{
-                    required: "This is required",
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <RichTextEditor value={value} onChange={onChange} />
-                  )}
-                  name="content"
-                />
-              </FormControl>
-            </>
-          )}
-
-          <Flex>
-            {activeStep !== 1 && (
-              <Button
-                mt={4}
-                variant={"ghost"}
-                size={"xl"}
-                isLoading={isLoading}
-                onClick={handleBack}
-              >
-                Back
-              </Button>
-            )}
-            <Spacer />
-
+          <Flex justifyContent={"end"}>
             <Button
               mt={4}
-              variant={mood ? "solid" : "ghost"}
+              variant={"solid"}
+              colorScheme={"teal"}
               size={"xl"}
               isLoading={isLoading}
               type="submit"
             >
-              {isLastStep ? "Publish" : "Next"}
+              Publish
             </Button>
           </Flex>
         </form>

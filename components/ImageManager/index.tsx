@@ -1,16 +1,4 @@
-import { Button } from "@chakra-ui/button";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Grid,
-  Box,
-} from "@chakra-ui/react";
+import { Grid, Box } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
 import { FileError } from "react-dropzone";
 import { Image } from "../../API";
@@ -32,9 +20,6 @@ export interface ImageDropzoneProps {
  * @return {ReactElement}
  */
 export default function ImageManager({ images = [] }: ImageDropzoneProps): ReactElement {
-  // Local state
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
     <>
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
@@ -45,24 +30,7 @@ export default function ImageManager({ images = [] }: ImageDropzoneProps): React
           </Box>
         ))}
       </Grid>
-
-      <Button onClick={onOpen}>Upload Images</Button>
-
-      <Modal isOpen={isOpen} onClose={onClose} size="3xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Upload images</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <ImageDropzone />
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="teal" mr={3} onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ImageDropzone />
     </>
   );
 }
