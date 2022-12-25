@@ -1,6 +1,7 @@
 import { Box, HStack, useRadio, useRadioGroup } from "@chakra-ui/react";
 import { map } from "lodash";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React from "react";
 
 // 1. Create a component that consumes the `useRadio` hook
@@ -38,17 +39,18 @@ function RadioCard(props: any) {
 type Props = {};
 
 export default function Calendar({}: Props) {
+  const router = useRouter();
   const currentDate = moment();
   const weekStart = currentDate.clone().startOf("isoWeek");
   var days = [];
   for (var i = 0; i <= 6; i++) {
-    days.push(moment(weekStart).add(i, "days").toISOString());
+    days.push(moment(weekStart).add(i, "days").toString());
   }
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "framework",
     defaultValue: "react",
-    onChange: console.log,
+    onChange: (date) => router.push({ pathname: "posts", query: { date: date } }),
   });
 
   const group = getRootProps();

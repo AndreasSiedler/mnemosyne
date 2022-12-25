@@ -1,7 +1,7 @@
 import API from "@aws-amplify/api";
 import Storage from "@aws-amplify/storage";
 import { Box } from "@chakra-ui/layout";
-import { Button, HStack, Progress, Spacer, Text, useToast } from "@chakra-ui/react";
+import { Button, HStack, Image, Progress, Spacer, Text, useToast } from "@chakra-ui/react";
 import React, { ReactElement, useState } from "react";
 import { toastErrorConfig, toastSuccessConfig } from "../../../config/constants";
 import { createImage as createImageMutation } from "../../../graphql/mutations";
@@ -10,6 +10,7 @@ import { graphqlOperation } from "aws-amplify";
 import { uuid } from "uuidv4";
 import { useFormContext } from "react-hook-form";
 import { ICreatePostInput } from "../../post/AddPost";
+import { url } from "inspector";
 
 interface Props {
   file: File;
@@ -77,17 +78,28 @@ export default function SingleFileUploadWithProgress({
   }
 
   return (
-    <Box>
-      <HStack>
-        <Text>{file.name}</Text>
-        <Spacer />
-        {progress !== 100 && (
-          <Button isLoading={loading} onClick={() => uploadFile(file)}>
-            Upload
-          </Button>
-        )}
-        <Button onClick={() => onDelete(file)}>Delete</Button>
-      </HStack>
+    <Box boxSize={"200"} position={"relative"}>
+      <Image
+        position={"absolute"}
+        top={0}
+        bottom={0}
+        w={"full"}
+        h={"full"}
+        objectFit={"cover"}
+        src={URL.createObjectURL(file)}
+      />
+      {progress !== 100 && (
+        <Button
+          position={"absolute"}
+          top={0}
+          right={0}
+          isLoading={loading}
+          onClick={() => uploadFile(file)}
+        >
+          Upload
+        </Button>
+      )}
+      <Button onClick={() => onDelete(file)}>Delete</Button>
       <Progress value={progress} />
     </Box>
   );

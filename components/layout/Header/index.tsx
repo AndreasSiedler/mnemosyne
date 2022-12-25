@@ -15,7 +15,7 @@ import { useUser } from "../../../context/AuthContext";
 import ProfileMenu from "../../ProfileMenu";
 import { useRouter } from "next/router";
 
-const Links = ["Dashboard", "Projects", "Team"];
+const Links = ["Posts", "Team"];
 
 const NavLink = ({ children }: { children: ReactNode }) => (
   <Link
