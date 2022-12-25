@@ -10,7 +10,6 @@ import {
   useToast,
   Image,
   Spacer,
-  Heading,
   Progress,
   Container,
   IconButton,
@@ -21,17 +20,18 @@ import { toastPosition } from "../../config/constants";
 import isEmpty from "lodash/isEmpty";
 import { RichTextEditor } from "../texteditor/RichtextEditor";
 import { useRouter } from "next/router";
-import { CgSmile, CgSmileMouthOpen, CgSmileNeutral, CgSmileNone, CgSmileSad } from "react-icons/cg";
-import { MoodIcon } from "./MoodIcon";
 import { BsLock } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
 import { POSTS_NEW_ROUTE } from "../../pages/posts/new";
 import { createEntry } from "../../graphql/mutations";
 import Calendar from "./Calendar";
+import ImageManager from "../ImageManager";
+import { Image as TImage } from "../../API";
 
 const formSteps = ["mood", "content"];
 
 export type ICreatePostInput = {
+  images?: TImage[];
   mood: number;
   title: string;
   caption: string;
@@ -57,6 +57,7 @@ export default function AddPost() {
 
   const {
     handleSubmit,
+    getValues,
     register,
     watch,
     control,
@@ -174,54 +175,15 @@ export default function AddPost() {
         </Center>
         <form onSubmit={handleSubmit(handleFurther)} noValidate>
           {activeStep === 1 && (
-            <FormControl isInvalid={Boolean(errors.cover)} isRequired>
-              <Heading textAlign={"center"} color={"teal"}>
-                How do you feel today?
-              </Heading>
-              <Controller
-                control={control}
-                rules={{ required: "This is required." }}
-                name="mood"
-                render={({ field: { onChange, value } }) => (
-                  <Flex mt={"10"}>
-                    <MoodIcon
-                      icon={CgSmileSad}
-                      isActive={value === 0}
-                      value={0}
-                      onClick={onChange}
-                    />
-                    <Spacer />
-                    <MoodIcon
-                      icon={CgSmileNone}
-                      isActive={value === 25}
-                      value={25}
-                      onClick={onChange}
-                    />
-                    <Spacer />
-                    <MoodIcon
-                      icon={CgSmileNeutral}
-                      isActive={value === 50}
-                      value={50}
-                      onClick={onChange}
-                    />
-                    <Spacer />
-                    <MoodIcon
-                      icon={CgSmile}
-                      isActive={value === 75}
-                      value={75}
-                      onClick={onChange}
-                    />
-                    <Spacer />
-                    <MoodIcon
-                      icon={CgSmileMouthOpen}
-                      isActive={value === 100}
-                      value={100}
-                      onClick={onChange}
-                    />
-                  </Flex>
-                )}
+            <FormControl isInvalid={Boolean(errors.images)} isRequired>
+              <ImageManager
+                {...register("images")}
+                images={getValues("images") ?? []}
+                // onChange={(files: CreateImageInput[]) => {
+                //   setValue(name, files);
+                // }}
               />
-              <FormErrorMessage>{errors.mood && errors.mood.message}</FormErrorMessage>
+              <FormErrorMessage>{errors.images && errors.images.message}</FormErrorMessage>
             </FormControl>
           )}
 

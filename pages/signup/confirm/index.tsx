@@ -18,7 +18,6 @@ import {
 } from "@chakra-ui/react";
 import { Auth } from "aws-amplify";
 import { useUser } from "../../../context/AuthContext";
-import { CognitoUser } from "@aws-amplify/auth";
 import { useRouter } from "next/router";
 
 type IFormInput = {
@@ -46,7 +45,6 @@ export default function ConfirmSignup() {
       await confirmSignupWithCode(values);
       router.push("/signin");
     } catch (error) {
-      console.error(error);
       toast({
         title: "Failure.",
         description: "Something went wrong.",
@@ -58,7 +56,7 @@ export default function ConfirmSignup() {
     }
   }
 
-  async function confirmSignupWithCode(data: IFormInput): Promise<CognitoUser> {
+  async function confirmSignupWithCode(data: IFormInput) {
     const { code } = data;
     const { email } = router.query;
 
@@ -72,7 +70,6 @@ export default function ConfirmSignup() {
         isClosable: true,
         position: "bottom-right",
       });
-      return user;
     } catch (error) {
       throw error;
     }
