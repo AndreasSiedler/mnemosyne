@@ -21,10 +21,34 @@ import Calendar from "../../components/post/Calendar";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import moment from "moment";
+import { useQuery } from "@tanstack/react-query";
+import { API } from "aws-amplify";
+import { listPosts } from "../../graphql/queries";
+import { ListPostsQuery, ModelPostFilterInput } from "../../API";
+import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
+
+const fetcher = async (date: string) => {
+  const filter: ModelPostFilterInput = {
+    date: {
+      eq: date as string,
+    },
+  };
+  const repsonse = (await API.graphql({
+    query: listPosts,
+    variables: {
+      filter: filter,
+    },
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
+  })) as GraphQLResult<ListPostsQuery>;
+
+  return repsonse.data?.listPosts;
+};
 
 const PostsPage: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { date } = useRouter().query;
+  const { data } = useQuery([`posts/${date}`], () => fetcher(date as string));
+
   const isValidDate = moment(date).isValid();
   const DynamicAddPostForm = dynamic(() => import("../../components/post/AddPost"), {
     loading: () => <Spinner />,
@@ -35,6 +59,8 @@ const PostsPage: NextPage = () => {
       <Layout title="Add Post">
         <Container maxW={"container.sm"} py={"10"} minH={"100vh"}>
           <Calendar />
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+
           <Button
             disabled={!isValidDate}
             w={"full"}
@@ -45,6 +71,7 @@ const PostsPage: NextPage = () => {
           >
             Add Post
           </Button>
+
           {!isValidDate && (
             <Alert status="warning">
               <AlertIcon />
