@@ -22,6 +22,7 @@ import { createPost } from "../../graphql/mutations";
 import ImageManager from "../ImageManager";
 import { Image as TImage } from "../../API";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
+import Calendar from "./Calendar";
 
 const formSteps = ["mood", "content"];
 
@@ -125,6 +126,7 @@ export default function AddPost() {
         height={"1"}
       />
       <Container maxW={"container.sm"} py={"10"} minH={"100vh"}>
+        <Calendar />
         <Center>
           <Icon as={BsLock} h={"10"} w={"10"} color={"gray.300"} />
         </Center>
