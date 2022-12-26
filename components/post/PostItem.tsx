@@ -13,6 +13,8 @@ import { Post } from "../../API";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { BiPencil } from "react-icons/bi";
 import { useRouter } from "next/router";
+import DynamicImage from "../DynamicImage";
+import { first } from "lodash";
 
 type PostItemProps = {
   post: Post;
@@ -21,6 +23,7 @@ type PostItemProps = {
 export default function PostItem({ post }: PostItemProps) {
   const router = useRouter();
   const params = router.query;
+  const bigImage = first(post.images?.items);
 
   function handlePostEdit() {
     router.push({ pathname: "posts", query: { postEditId: post.id, ...params } });
@@ -38,13 +41,8 @@ export default function PostItem({ post }: PostItemProps) {
         overflow={"hidden"}
       >
         <Box h={"210px"} bg={"gray.100"} mt={-6} mx={-6} mb={6} pos={"relative"}>
-          <Image
-            alt=""
-            src={
-              "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-            }
-            fill
-          />
+          {bigImage && <DynamicImage imageKey={bigImage?.fullSize.key as string} />}
+
           <Box position={"absolute"} right={0} p={2}>
             <IconButton icon={<DeleteIcon />} aria-label={"Delete post"} mr={1} />
             <IconButton icon={<BiPencil />} aria-label={"Delete post"} onClick={handlePostEdit} />

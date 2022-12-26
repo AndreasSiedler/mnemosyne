@@ -1,5 +1,5 @@
 import { Controller, useForm } from "react-hook-form";
-import React from "react";
+import React, { useEffect } from "react";
 import { API } from "aws-amplify";
 import { FormErrorMessage, FormControl, Button, Flex, useToast } from "@chakra-ui/react";
 import { toastPosition } from "../../config/constants";
@@ -11,6 +11,8 @@ import ImageManager from "../ImageManager";
 import { GetPostQuery, GetPostQueryVariables, Image as TImage, UpdatePostInput } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { getPost } from "../../graphql/queries";
+import DynamicImage from "../DynamicImage";
+import { isEmpty } from "lodash";
 
 const formSteps = ["mood", "content"];
 
@@ -53,7 +55,14 @@ export default function AddPost() {
     register,
     control,
     formState: { errors },
+    reset,
   } = useForm<ICreatePostInput>();
+
+  useEffect(() => {
+    if (!isEmpty(data)) {
+      console.log("data", data);
+    }
+  });
 
   const { mutate, isLoading } = useMutation(
     (data: ICreatePostInput) => {
@@ -104,6 +113,7 @@ export default function AddPost() {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <DynamicImage imageKey={"images/3c762b87-4e75-428d-a72c-f352e4f48644.jpeg"} />
         <FormControl isInvalid={Boolean(errors.images)} isRequired>
           <ImageManager
             {...register("images")}

@@ -1,16 +1,14 @@
-import API from "@aws-amplify/api";
-import Storage from "@aws-amplify/storage";
 import { Box } from "@chakra-ui/layout";
-import { Button, HStack, Image, Progress, Spacer, Text, useToast } from "@chakra-ui/react";
+import { Button, Image, Progress, useToast } from "@chakra-ui/react";
 import React, { ReactElement, useState } from "react";
-import { toastErrorConfig, toastSuccessConfig } from "../../../config/constants";
-import { createImage as createImageMutation } from "../../../graphql/mutations";
+import { toastErrorConfig, toastPosition, toastSuccessConfig } from "../../../config/constants";
+import { createImage } from "../../../graphql/mutations";
 import { CreateImageInput } from "../../../API";
-import { graphqlOperation } from "aws-amplify";
+import { API, Storage, graphqlOperation } from "aws-amplify";
 import { uuid } from "uuidv4";
-import { useFormContext } from "react-hook-form";
-import { ICreatePostInput } from "../../post/AddPost";
-import { url } from "inspector";
+import { useRouter } from "next/router";
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
+import { useMutation } from "@tanstack/react-query";
 
 interface Props {
   file: File;
@@ -32,11 +30,54 @@ export default function SingleFileUploadWithProgress({
 }: Props): ReactElement {
   // Hooks
   const toast = useToast();
-  // const { getValues } = useFormContext<ICreatePostInput>();
+  const router = useRouter();
+  const { postEditId } = router.query;
 
   // Local State
   const [progress, setProgres] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  // Save image entity to db with resulted storage key
+  const { mutate, isLoading } = useMutation(
+    (storageKey: string) => {
+      const createImageInput: CreateImageInput = {
+        postId: postEditId as string,
+        fullSize: {
+          region: "eu-central-1",
+          bucket: "media180607-dev",
+          key: storageKey,
+        },
+      };
+      return API.graphql<any>({
+        query: createImage,
+        authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
+        variables: {
+          input: createImageInput,
+        },
+      });
+    },
+    {
+      onError: () =>
+        toast({
+          title: "Failure",
+          description: "Error",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+          position: toastPosition,
+        }),
+
+      onSuccess: () =>
+        toast({
+          title: "Success",
+          description: "Image was created.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+          position: toastPosition,
+        }),
+    }
+  );
 
   // Logic
   async function uploadFile(file: File) {
@@ -48,24 +89,16 @@ export default function SingleFileUploadWithProgress({
       // const values = getValues();
 
       // Upload image file to s3 bucket
-      // await Storage.put(key, file, {
-      //   contentType: "image/png", // contentType is optional
-      //   progressCallback(progress) {
-      //     const percentage = (progress.loaded / progress.total) * 100;
-      //     setProgres(Math.round(percentage));
-      //   },
-      // });
+      await Storage.put(key, file, {
+        contentType: "image/png", // contentType is optional
+        progressCallback(progress) {
+          const percentage = (progress.loaded / progress.total) * 100;
+          setProgres(Math.round(percentage));
+        },
+      });
 
       // // Save image entity to db with resulted storage key
-      // const createImageInput: CreateImageInput = {
-      //   postID: values.,
-      //   fullSize: {
-      //     region: "eu-central-1",
-      //     bucket: "amplify-sharedventure-dev-151735-deployment",
-      //     key: key,
-      //   },
-      // };
-      // await API.graphql(graphqlOperation(createImageMutation, { input: createImageInput }));
+      mutate(key);
 
       // Update loading state
       setLoading(false);
