@@ -1,8 +1,8 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Box, Heading, HStack, IconButton, useRadio, useRadioGroup } from "@chakra-ui/react";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // 1. Create a component that consumes the `useRadio` hook
 function RadioCard(props: any) {
@@ -37,7 +37,7 @@ function RadioCard(props: any) {
   );
 }
 
-const getWeekDayFromMoment = (momentNumber: number) => {
+function getWeekDayFromMoment(momentNumber: number) {
   switch (momentNumber) {
     case 1:
       return "Mon";
@@ -56,19 +56,58 @@ const getWeekDayFromMoment = (momentNumber: number) => {
     default:
       return "";
   }
-};
+}
+
+function getMonthFromMoment(momentNumber: number) {
+  switch (momentNumber) {
+    case 0:
+      return "January";
+    case 1:
+      return "February";
+    case 2:
+      return "March";
+    case 3:
+      return "April";
+    case 4:
+      return "May";
+    case 5:
+      return "June";
+    case 6:
+      return "July";
+    case 7:
+      return "August";
+    case 8:
+      return "September";
+    case 9:
+      return "October";
+    case 10:
+      return "November";
+    case 11:
+      return "December";
+    default:
+      return "";
+  }
+}
+
+function getWeedDaysFromWeekStart(weekStart: Moment) {
+  let weekDays = [];
+  for (var i = 0; i <= 6; i++) {
+    weekDays.push(moment(weekStart).add(i, "days").format("YYYY-MM-DD"));
+  }
+  return weekDays;
+}
 
 export default function Calendar() {
   const router = useRouter();
   const currentDate = moment();
+  const [days, setDays] = useState<string[]>([]);
 
   const { date } = router.query;
-  const weekStart = currentDate.clone().startOf("isoWeek");
 
-  var days = [];
-  for (var i = 0; i <= 6; i++) {
-    days.push(moment(weekStart).add(i, "days").format("YYYY-MM-DD"));
-  }
+  useEffect(() => {
+    const weekStart = currentDate.clone().startOf("isoWeek");
+    setDays(getWeedDaysFromWeekStart(weekStart));
+  }, []);
 
   const { getRootProps, getRadioProps, value } = useRadioGroup({
     name: "date",
@@ -79,20 +118,22 @@ export default function Calendar() {
   const group = getRootProps();
 
   const handleDateLeftClick = () => {
-    const newDate = moment(date).clone().subtract(1, "days").format("YYYY-MM-DD");
-    router.push({ pathname: "posts", query: { date: newDate } });
+    const currWeekStart = moment(days[0]);
+    const previousWeekStart = currWeekStart.clone().subtract(7, "days");
+    setDays(getWeedDaysFromWeekStart(previousWeekStart));
   };
 
   const handleDateRightClick = () => {
-    const newDate = moment(date).clone().add(1, "days").format("YYYY-MM-DD");
-    router.push({ pathname: "posts", query: { date: newDate } });
+    const currWeekStart = moment(days[0]);
+    const nextWeekStart = currWeekStart.clone().add(7, "days");
+    setDays(getWeedDaysFromWeekStart(nextWeekStart));
   };
 
   return (
     <>
       <HStack justifyContent={"space-between"}>
         <Heading textAlign={"center"} as="h1" size={"md"}>
-          {moment(date).format("DD.MM.YYYY")}
+          {getMonthFromMoment(moment(days[0]).month())} {moment(days[0]).year()}
         </Heading>
         <Box>
           <IconButton
@@ -120,6 +161,9 @@ export default function Calendar() {
           );
         })}
       </HStack>
+      <Heading textAlign={"center"} as="h1" size={"md"} mt={5}>
+        {moment(date).format("DD.MM.YYYY")}
+      </Heading>
     </>
   );
 }
