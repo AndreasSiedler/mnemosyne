@@ -12,8 +12,6 @@ import { GetPostQuery, GetPostQueryVariables, Image, UpdatePostInput } from "../
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { getPost } from "../../graphql/queries";
 
-const formSteps = ["mood", "content"];
-
 const fetcher = async (id: string) => {
   const variables: GetPostQueryVariables = {
     id: id,
@@ -49,11 +47,9 @@ export default function AddPost() {
 
   const {
     handleSubmit,
-    getValues,
     register,
     control,
     formState: { errors },
-    reset,
   } = useForm<ICreatePostInput>();
 
   const { mutate, isLoading } = useMutation(
@@ -125,7 +121,7 @@ export default function AddPost() {
               render={({ field: { onChange, value } }) => {
                 return (
                   <RichTextEditor
-                    value={value ?? JSON.parse(data?.content ?? "")}
+                    value={data?.content ? JSON.parse(data?.content) : null}
                     onChange={onChange}
                   />
                 );

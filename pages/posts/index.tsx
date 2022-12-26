@@ -14,19 +14,42 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  useToast,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import Calendar from "../../components/Calendar";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import moment from "moment";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { API } from "aws-amplify";
 import { listPosts } from "../../graphql/queries";
-import { ListPostsQuery, ModelPostFilterInput, Post } from "../../API";
+import {
+  CreatePostInput,
+  CreatePostMutation,
+  ListPostsQuery,
+  ModelPostFilterInput,
+  Post,
+} from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { isEmpty, map } from "lodash";
 import PostItem from "../../components/post/PostItem";
+import { createPost } from "../../graphql/mutations";
+import { toastPosition } from "../../config/constants";
+
+const createFetcher = async (date: string) => {
+  const input: CreatePostInput = {
+    date: date as string,
+  };
+  const response = (await API.graphql({
+    query: createPost,
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
+    variables: {
+      input: input,
+    },
+  })) as GraphQLResult<CreatePostMutation>;
+  return response.data?.createPost;
+};
 
 const fetcher = async (date: string) => {
   const filter: ModelPostFilterInput = {
@@ -47,15 +70,41 @@ const fetcher = async (date: string) => {
 
 const PostsPage: NextPage = () => {
   const router = useRouter();
+  const toast = useToast();
   const { date, postEditId } = router.query;
   const { data, isFetched } = useQuery([`posts/${date}`], () => fetcher(date as string));
+  const { mutate, isLoading } = useMutation(createFetcher, {
+    onError: () =>
+      toast({
+        title: "Failure",
+        description: "Error",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+        position: toastPosition,
+      }),
+
+    onSuccess: (data) => {
+      router.push({ pathname: "posts", query: { date: date, postEditId: data?.id } });
+      return toast({
+        title: "Success",
+        description: "Post was updated.",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+        position: toastPosition,
+      });
+    },
+  });
 
   const isValidDate = moment(date).isValid();
   const DynamicAddPostForm = dynamic(() => import("../../components/post/AddPostForm"), {
     loading: () => <Spinner />,
   });
 
-  const handleAddPost = () => {};
+  const handleAddPost = () => {
+    mutate(date as string);
+  };
 
   const handleEditClose = () => {
     router.push({ pathname: "posts", query: { date } });
@@ -76,6 +125,7 @@ const PostsPage: NextPage = () => {
             mt={10}
             leftIcon={<AddIcon />}
             onClick={handleAddPost}
+            isLoading={isLoading}
           >
             Add Post
           </Button>

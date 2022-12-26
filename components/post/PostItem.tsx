@@ -6,19 +6,9 @@ import { useRouter } from "next/router";
 import DynamicImage from "../DynamicImage";
 import { first } from "lodash";
 import { Editable, Slate, withReact } from "slate-react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { createEditor } from "slate";
-
-const initialValue = [
-  {
-    type: "paragraph",
-    children: [
-      {
-        text: "This example shows what happens when the Editor is set to readOnly, it is not editable",
-      },
-    ],
-  },
-];
+import { Element } from "../texteditor/Element";
 
 type PostItemProps = {
   post: Post;
@@ -26,6 +16,8 @@ type PostItemProps = {
 
 export default function PostItem({ post }: PostItemProps) {
   const editor = useMemo(() => withReact(createEditor()), []);
+  const renderElement = useCallback((props: any) => <Element {...props} />, []);
+
   const router = useRouter();
   const params = router.query;
   const bigImage = first(post.images?.items);
@@ -52,8 +44,8 @@ export default function PostItem({ post }: PostItemProps) {
             <IconButton icon={<BiPencil />} aria-label={"Delete post"} onClick={handlePostEdit} />
           </Box>
         </Box>
-        <Slate editor={editor} value={JSON.parse(post.content ?? "")}>
-          <Editable readOnly placeholder="Enter some plain text..." />
+        <Slate editor={editor} value={post?.content ? JSON.parse(post?.content) : []}>
+          <Editable renderElement={renderElement} readOnly placeholder="Enter some plain text..." />
         </Slate>
       </Box>
     </Center>
