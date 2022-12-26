@@ -155,6 +155,11 @@ export const createPost = /* GraphQL */ `
         items {
           id
           postId
+          fullSize {
+            region
+            bucket
+            key
+          }
           createdAt
           updatedAt
           owner
@@ -180,6 +185,11 @@ export const updatePost = /* GraphQL */ `
         items {
           id
           postId
+          fullSize {
+            region
+            bucket
+            key
+          }
           createdAt
           updatedAt
           owner
@@ -205,6 +215,11 @@ export const deletePost = /* GraphQL */ `
         items {
           id
           postId
+          fullSize {
+            region
+            bucket
+            key
+          }
           createdAt
           updatedAt
           owner

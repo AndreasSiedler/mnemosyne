@@ -137,6 +137,11 @@ export const onCreatePost = /* GraphQL */ `
         items {
           id
           postId
+          fullSize {
+            region
+            bucket
+            key
+          }
           createdAt
           updatedAt
           owner
@@ -162,6 +167,11 @@ export const onUpdatePost = /* GraphQL */ `
         items {
           id
           postId
+          fullSize {
+            region
+            bucket
+            key
+          }
           createdAt
           updatedAt
           owner
@@ -187,6 +197,11 @@ export const onDeletePost = /* GraphQL */ `
         items {
           id
           postId
+          fullSize {
+            region
+            bucket
+            key
+          }
           createdAt
           updatedAt
           owner

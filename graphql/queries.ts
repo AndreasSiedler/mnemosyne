@@ -108,6 +108,11 @@ export const getPost = /* GraphQL */ `
         items {
           id
           postId
+          fullSize {
+            region
+            bucket
+            key
+          }
           createdAt
           updatedAt
           owner
@@ -132,6 +137,18 @@ export const listPosts = /* GraphQL */ `
         id
         content
         images {
+          items {
+            id
+            postId
+            fullSize {
+              region
+              bucket
+              key
+            }
+            createdAt
+            updatedAt
+            owner
+          }
           nextToken
         }
         date
