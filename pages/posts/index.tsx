@@ -14,7 +14,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import Calendar from "../../components/Calendar";
@@ -26,7 +25,7 @@ import { API } from "aws-amplify";
 import { listPosts } from "../../graphql/queries";
 import { ListPostsQuery, ModelPostFilterInput, Post } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
-import { map } from "lodash";
+import { isEmpty, map } from "lodash";
 import PostItem from "../../components/post/PostItem";
 
 const fetcher = async (date: string) => {
@@ -47,14 +46,20 @@ const fetcher = async (date: string) => {
 };
 
 const PostsPage: NextPage = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { date } = useRouter().query;
+  const router = useRouter();
+  const { date, postEditId } = router.query;
   const { data, isFetched } = useQuery([`posts/${date}`], () => fetcher(date as string));
 
   const isValidDate = moment(date).isValid();
-  const DynamicAddPostForm = dynamic(() => import("../../components/post/AddPost"), {
+  const DynamicAddPostForm = dynamic(() => import("../../components/post/AddPostForm"), {
     loading: () => <Spinner />,
   });
+
+  const handleAddPost = () => {};
+
+  const handleEditClose = () => {
+    router.push({ pathname: "posts", query: { date } });
+  };
 
   return (
     <>
@@ -69,7 +74,7 @@ const PostsPage: NextPage = () => {
             h={20}
             mt={10}
             leftIcon={<AddIcon />}
-            onClick={onOpen}
+            onClick={handleAddPost}
           >
             Add Post
           </Button>
@@ -82,7 +87,7 @@ const PostsPage: NextPage = () => {
           )}
         </Container>
       </Layout>
-      <Modal onClose={onClose} size={"2xl"} isOpen={isOpen}>
+      <Modal onClose={handleEditClose} size={"2xl"} isOpen={!isEmpty(postEditId)}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Modal Title</ModalHeader>
@@ -91,7 +96,7 @@ const PostsPage: NextPage = () => {
             <DynamicAddPostForm />
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>Close</Button>
+            <Button onClick={handleEditClose}>Close</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

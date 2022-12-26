@@ -1,18 +1,40 @@
 import Image from "next/image";
-import { Box, Center, Heading, Text, Stack, Avatar, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Heading,
+  Text,
+  Stack,
+  Avatar,
+  useColorModeValue,
+  IconButton,
+} from "@chakra-ui/react";
 import { Post } from "../../API";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { BiPencil } from "react-icons/bi";
+import { useRouter } from "next/router";
 
 type PostItemProps = {
   post: Post;
 };
 
 export default function PostItem({ post }: PostItemProps) {
+  const router = useRouter();
+  const params = router.query;
+
+  function handlePostEdit() {
+    router.push({ pathname: "posts", query: { postEditId: post.id, ...params } });
+  }
+
   return (
-    <Center>
+    <Center py={6}>
       <Box
+        maxW={"445px"}
         w={"full"}
         bg={useColorModeValue("white", "gray.900")}
+        boxShadow={"lg"}
         rounded={"md"}
+        p={6}
         overflow={"hidden"}
       >
         <Box h={"210px"} bg={"gray.100"} mt={-6} mx={-6} mb={6} pos={"relative"}>
@@ -23,6 +45,10 @@ export default function PostItem({ post }: PostItemProps) {
             }
             fill
           />
+          <Box position={"absolute"} right={0} p={2}>
+            <IconButton icon={<DeleteIcon />} aria-label={"Delete post"} mr={1} />
+            <IconButton icon={<BiPencil />} aria-label={"Delete post"} onClick={handlePostEdit} />
+          </Box>
         </Box>
         <Stack>
           <Text

@@ -14,13 +14,27 @@ import { toastPosition } from "../../config/constants";
 import { RichTextEditor } from "../texteditor/RichtextEditor";
 import { useRouter } from "next/router";
 import { BsLock } from "react-icons/bs";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createPost } from "../../graphql/mutations";
 import ImageManager from "../ImageManager";
-import { Image as TImage } from "../../API";
-import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
+import { GetPostQuery, GetPostQueryVariables, Image as TImage } from "../../API";
+import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
+import { getPost } from "../../graphql/queries";
 
 const formSteps = ["mood", "content"];
+
+const fetcher = async (id: string) => {
+  const variables: GetPostQueryVariables = {
+    id: id,
+  };
+  const repsonse = (await API.graphql({
+    query: getPost,
+    variables: variables,
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
+  })) as GraphQLResult<GetPostQuery>;
+
+  return repsonse.data?.getPost;
+};
 
 export type ICreatePostInput = {
   images?: TImage[];
@@ -36,9 +50,13 @@ export default function AddPost() {
   const router = useRouter();
   const toast = useToast();
 
-  const { date } = router.query;
+  const { date, postEditId } = router.query;
   const activeStep = router.query["step"] ? parseInt(router.query["step"] as string) : 1;
   const isLastStep = activeStep === formSteps.length;
+
+  const { data, isFetched } = useQuery([`posts/${postEditId}`], () =>
+    fetcher(postEditId as string)
+  );
 
   const {
     handleSubmit,
@@ -103,6 +121,7 @@ export default function AddPost() {
 
   return (
     <>
+      {JSON.stringify(data)}
       <Center>
         <Icon as={BsLock} h={"10"} w={"10"} color={"gray.300"} />
       </Center>
@@ -140,7 +159,7 @@ export default function AddPost() {
             isLoading={isLoading}
             type="submit"
           >
-            Publish
+            Save
           </Button>
         </Flex>
       </form>
