@@ -17,7 +17,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import Calendar from "../../components/post/Calendar";
+import Calendar from "../../components/Calendar";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import moment from "moment";

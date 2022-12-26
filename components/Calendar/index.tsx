@@ -130,7 +130,7 @@ export default function Calendar() {
   };
 
   return (
-    <>
+    <Box mb={10}>
       <HStack justifyContent={"space-between"}>
         <Heading textAlign={"center"} as="h1" size={"md"}>
           {getMonthFromMoment(moment(days[0]).month())} {moment(days[0]).year()}
@@ -161,9 +161,6 @@ export default function Calendar() {
           );
         })}
       </HStack>
-      <Heading textAlign={"center"} as="h1" size={"md"} mt={5}>
-        {moment(date).format("DD.MM.YYYY")}
-      </Heading>
-    </>
+    </Box>
   );
 }
