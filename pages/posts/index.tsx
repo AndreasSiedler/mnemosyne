@@ -24,8 +24,10 @@ import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
 import { API } from "aws-amplify";
 import { listPosts } from "../../graphql/queries";
-import { ListPostsQuery, ModelPostFilterInput } from "../../API";
+import { ListPostsQuery, ModelPostFilterInput, Post } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
+import { map } from "lodash";
+import PostItem from "../../components/post/PostItem";
 
 const fetcher = async (date: string) => {
   const filter: ModelPostFilterInput = {
@@ -47,7 +49,7 @@ const fetcher = async (date: string) => {
 const PostsPage: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { date } = useRouter().query;
-  const { data } = useQuery([`posts/${date}`], () => fetcher(date as string));
+  const { data, isFetched } = useQuery([`posts/${date}`], () => fetcher(date as string));
 
   const isValidDate = moment(date).isValid();
   const DynamicAddPostForm = dynamic(() => import("../../components/post/AddPost"), {
@@ -59,7 +61,7 @@ const PostsPage: NextPage = () => {
       <Layout title="Add Post">
         <Container maxW={"container.sm"} py={"10"} minH={"100vh"}>
           <Calendar />
-          <pre>{JSON.stringify(data, null, 2)}</pre>
+          {isFetched && map(data?.items as Post[], (post) => <PostItem post={post} />)}
 
           <Button
             disabled={!isValidDate}

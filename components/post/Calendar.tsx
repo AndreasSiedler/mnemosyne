@@ -1,4 +1,5 @@
-import { Box, Heading, HStack, useRadio, useRadioGroup } from "@chakra-ui/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Box, Heading, HStack, IconButton, useRadio, useRadioGroup } from "@chakra-ui/react";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
@@ -28,6 +29,7 @@ function RadioCard(props: any) {
         }}
         px={5}
         py={3}
+        textAlign={"center"}
       >
         {props.children}
       </Box>
@@ -35,9 +37,28 @@ function RadioCard(props: any) {
   );
 }
 
-type Props = {};
+const getWeekDayFromMoment = (momentNumber: number) => {
+  switch (momentNumber) {
+    case 1:
+      return "Mon";
+    case 2:
+      return "Tue";
+    case 3:
+      return "Wed";
+    case 4:
+      return "Thu";
+    case 5:
+      return "Fri";
+    case 6:
+      return "Sat";
+    case 0:
+      return "Sun";
+    default:
+      return "";
+  }
+};
 
-export default function Calendar({}: Props) {
+export default function Calendar() {
   const router = useRouter();
   const currentDate = moment();
 
@@ -51,23 +72,50 @@ export default function Calendar({}: Props) {
 
   const { getRootProps, getRadioProps, value } = useRadioGroup({
     name: "date",
-    defaultValue: date as string,
+    value: date as string,
     onChange: (date) => router.push({ pathname: "posts", query: { date: date } }),
   });
 
   const group = getRootProps();
 
+  const handleDateLeftClick = () => {
+    const newDate = moment(date).clone().subtract(1, "days").format("YYYY-MM-DD");
+    router.push({ pathname: "posts", query: { date: newDate } });
+  };
+
+  const handleDateRightClick = () => {
+    const newDate = moment(date).clone().add(1, "days").format("YYYY-MM-DD");
+    router.push({ pathname: "posts", query: { date: newDate } });
+  };
+
   return (
     <>
-      <Heading textAlign={"center"} as="h1" size={"md"}>
-        {moment(value).format("DD.MM.YYYY")}
-      </Heading>
+      <HStack justifyContent={"space-between"}>
+        <Heading textAlign={"center"} as="h1" size={"md"}>
+          {moment(date).format("DD.MM.YYYY")}
+        </Heading>
+        <Box>
+          <IconButton
+            aria-label="Previous day"
+            icon={<ChevronLeftIcon />}
+            onClick={handleDateLeftClick}
+          />
+          <IconButton
+            aria-label="Next day"
+            icon={<ChevronRightIcon />}
+            onClick={handleDateRightClick}
+          />
+        </Box>
+      </HStack>
+
       <HStack {...group} justify={"space-between"} mt={5}>
         {days.map((value) => {
           const radio = getRadioProps({ value });
+          const momentWeekNumber = moment(value).weekday();
+          const weekDay = getWeekDayFromMoment(momentWeekNumber);
           return (
             <RadioCard key={value} {...radio}>
-              {moment(value).format("DD")}
+              {weekDay} {moment(value).format("DD")}
             </RadioCard>
           );
         })}
