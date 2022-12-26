@@ -66,7 +66,8 @@ const PostsPage: NextPage = () => {
       <Layout title="Add Post">
         <Container maxW={"container.sm"} py={"10"} minH={"100vh"}>
           <Calendar />
-          {isFetched && map(data?.items as Post[], (post) => <PostItem post={post} />)}
+          {isFetched &&
+            map(data?.items as Post[], (post) => <PostItem key={post.id} post={post} />)}
 
           <Button
             disabled={!isValidDate}

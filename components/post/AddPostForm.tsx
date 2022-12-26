@@ -1,23 +1,14 @@
 import { Controller, useForm } from "react-hook-form";
-import React, { useEffect } from "react";
+import React from "react";
 import { API } from "aws-amplify";
-import {
-  FormErrorMessage,
-  FormControl,
-  Button,
-  Flex,
-  useToast,
-  Center,
-  Icon,
-} from "@chakra-ui/react";
+import { FormErrorMessage, FormControl, Button, Flex, useToast } from "@chakra-ui/react";
 import { toastPosition } from "../../config/constants";
 import { RichTextEditor } from "../texteditor/RichtextEditor";
 import { useRouter } from "next/router";
-import { BsLock } from "react-icons/bs";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createPost } from "../../graphql/mutations";
+import { updatePost } from "../../graphql/mutations";
 import ImageManager from "../ImageManager";
-import { GetPostQuery, GetPostQueryVariables, Image as TImage } from "../../API";
+import { GetPostQuery, GetPostQueryVariables, Image as TImage, UpdatePostInput } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { getPost } from "../../graphql/queries";
 
@@ -51,8 +42,6 @@ export default function AddPost() {
   const toast = useToast();
 
   const { date, postEditId } = router.query;
-  const activeStep = router.query["step"] ? parseInt(router.query["step"] as string) : 1;
-  const isLastStep = activeStep === formSteps.length;
 
   const { data, isFetched } = useQuery([`posts/${postEditId}`], () =>
     fetcher(postEditId as string)
@@ -63,21 +52,21 @@ export default function AddPost() {
     getValues,
     register,
     control,
-    reset,
     formState: { errors },
   } = useForm<ICreatePostInput>();
 
   const { mutate, isLoading } = useMutation(
     (data: ICreatePostInput) => {
-      console.log(date);
+      const input: UpdatePostInput = {
+        id: postEditId as string,
+        content: JSON.stringify(data.content),
+        date: date as string,
+      };
       return API.graphql<any>({
-        query: createPost,
+        query: updatePost,
         authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
         variables: {
-          input: {
-            content: JSON.stringify(data.content),
-            date: date,
-          },
+          input: input,
         },
       });
     },
@@ -104,13 +93,6 @@ export default function AddPost() {
     }
   );
 
-  // Get draft-post from localstorage und reset post form
-  useEffect(() => {
-    const storedData = localStorage.getItem("draft-post");
-    if (!storedData) return;
-    reset(JSON.parse(storedData));
-  }, []);
-
   /**
    * Create post with data
    * @param {ICreatePostInput} data
@@ -121,10 +103,6 @@ export default function AddPost() {
 
   return (
     <>
-      {JSON.stringify(data)}
-      <Center>
-        <Icon as={BsLock} h={"10"} w={"10"} color={"gray.300"} />
-      </Center>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <FormControl isInvalid={Boolean(errors.images)} isRequired>
           <ImageManager
@@ -136,19 +114,25 @@ export default function AddPost() {
           />
           <FormErrorMessage>{errors.images && errors.images.message}</FormErrorMessage>
         </FormControl>
-
-        <FormControl mt={"10"} isInvalid={Boolean(errors.content)} isRequired>
-          <Controller
-            control={control}
-            rules={{
-              required: "This is required",
-            }}
-            render={({ field: { onChange, value } }) => (
-              <RichTextEditor value={value} onChange={onChange} />
-            )}
-            name="content"
-          />
-        </FormControl>
+        {isFetched && (
+          <FormControl mt={"10"} isInvalid={Boolean(errors.content)} isRequired>
+            <Controller
+              control={control}
+              rules={{
+                required: "This is required",
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <RichTextEditor
+                    value={value ?? JSON.parse(data?.content ?? "")}
+                    onChange={onChange}
+                  />
+                );
+              }}
+              name="content"
+            />
+          </FormControl>
+        )}
 
         <Flex justifyContent={"end"}>
           <Button
