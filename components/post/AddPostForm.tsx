@@ -1,5 +1,5 @@
 import { Controller, useForm } from "react-hook-form";
-import React, { useEffect } from "react";
+import React from "react";
 import { API } from "aws-amplify";
 import { FormErrorMessage, FormControl, Button, Flex, useToast } from "@chakra-ui/react";
 import { toastPosition } from "../../config/constants";
@@ -8,11 +8,9 @@ import { useRouter } from "next/router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { updatePost } from "../../graphql/mutations";
 import ImageManager from "../ImageManager";
-import { GetPostQuery, GetPostQueryVariables, Image as TImage, UpdatePostInput } from "../../API";
+import { GetPostQuery, GetPostQueryVariables, Image, UpdatePostInput } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { getPost } from "../../graphql/queries";
-import DynamicImage from "../DynamicImage";
-import { isEmpty } from "lodash";
 
 const formSteps = ["mood", "content"];
 
@@ -30,7 +28,7 @@ const fetcher = async (id: string) => {
 };
 
 export type ICreatePostInput = {
-  images?: TImage[];
+  images?: Image[];
   content: any;
 };
 
@@ -57,12 +55,6 @@ export default function AddPost() {
     formState: { errors },
     reset,
   } = useForm<ICreatePostInput>();
-
-  useEffect(() => {
-    if (!isEmpty(data)) {
-      console.log("data", data);
-    }
-  });
 
   const { mutate, isLoading } = useMutation(
     (data: ICreatePostInput) => {
@@ -93,7 +85,7 @@ export default function AddPost() {
       onSuccess: () =>
         toast({
           title: "Success",
-          description: "Post was created.",
+          description: "Post was updated.",
           status: "success",
           duration: 9000,
           isClosable: true,
@@ -112,19 +104,18 @@ export default function AddPost() {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <DynamicImage imageKey={"images/3c762b87-4e75-428d-a72c-f352e4f48644.jpeg"} />
-        <FormControl isInvalid={Boolean(errors.images)} isRequired>
-          <ImageManager
-            {...register("images")}
-            images={getValues("images") ?? []}
-            // onChange={(files: CreateImageInput[]) => {
-            //   setValue(name, files);
-            // }}
-          />
-          <FormErrorMessage>{errors.images && errors.images.message}</FormErrorMessage>
-        </FormControl>
-        {isFetched && (
+      {isFetched && (
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <FormControl isInvalid={Boolean(errors.images)} isRequired>
+            <ImageManager
+              {...register("images")}
+              imgs={(data?.images?.items as Image[]) ?? []}
+              // onChange={(files: CreateImageInput[]) => {
+              //   setValue(name, files);
+              // }}
+            />
+            <FormErrorMessage>{errors.images && errors.images.message}</FormErrorMessage>
+          </FormControl>
           <FormControl mt={"10"} isInvalid={Boolean(errors.content)} isRequired>
             <Controller
               control={control}
@@ -142,21 +133,21 @@ export default function AddPost() {
               name="content"
             />
           </FormControl>
-        )}
 
-        <Flex justifyContent={"end"}>
-          <Button
-            mt={4}
-            variant={"solid"}
-            colorScheme={"teal"}
-            size={"xl"}
-            isLoading={isLoading}
-            type="submit"
-          >
-            Save
-          </Button>
-        </Flex>
-      </form>
+          <Flex justifyContent={"end"}>
+            <Button
+              mt={4}
+              variant={"solid"}
+              colorScheme={"teal"}
+              size={"xl"}
+              isLoading={isLoading}
+              type="submit"
+            >
+              Save
+            </Button>
+          </Flex>
+        </form>
+      )}
     </>
   );
 }

@@ -91,7 +91,7 @@ const PostsPage: NextPage = () => {
       <Modal onClose={handleEditClose} size={"2xl"} isOpen={!isEmpty(postEditId)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Edit Post</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <DynamicAddPostForm />

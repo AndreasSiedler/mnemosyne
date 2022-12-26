@@ -1,9 +1,12 @@
-import { Grid, Box } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import { FileError } from "react-dropzone";
-import { Image } from "../../API";
+import { Box, SimpleGrid } from "@chakra-ui/react";
 import DynamicImage from "../DynamicImage";
 import ImageDropzone from "./ImageDropZone";
+import UploadError from "./UploadError";
+import SingleFileUploadWithProgress from "./FileHeaderWithProgress";
+import { map } from "lodash";
+import { Image as TImage } from "../../API";
 
 export interface UploadableFile {
   file: File;
@@ -12,25 +15,58 @@ export interface UploadableFile {
 }
 
 export interface ImageDropzoneProps {
-  images: Image[];
+  imgs: TImage[];
 }
 
 /**
  * Renders an Image file manager
  * @return {ReactElement}
  */
-export default function ImageManager({ images = [] }: ImageDropzoneProps): ReactElement {
+export default function ImageManager({ imgs = [] }: ImageDropzoneProps): ReactElement {
+  const [images, setImages] = useState<UploadableFile[]>([]);
+
+  // Logic
+  function onDelete(file: File) {
+    setImages((currFiles) => currFiles.filter((fw) => fw.file !== file));
+  }
+
+  function onFileUpload(file: File, key: string) {
+    setImages((currFiles) =>
+      currFiles.map((fw) => {
+        if (fw.file === file) {
+          return { ...fw, key };
+        }
+        return fw;
+      })
+    );
+  }
+
   return (
     <>
-      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-        {images.map((img) => (
-          <Box key={img.id} w="100%">
-            {/* ToDO: OnDelet btton */}
-            <DynamicImage imageKey={img.fullSize.key} />
-          </Box>
+      <SimpleGrid mt={5} columns={3}>
+        {map(imgs, (img) => {
+          return (
+            <Box boxSize={"200"} position={"relative"}>
+              <DynamicImage imageKey={img.fullSize.key} />
+            </Box>
+          );
+        })}
+        {map(images, (fw, idx) => (
+          <>
+            {fw.errors.length ? (
+              <UploadError key={idx} file={fw.file} errors={fw.errors} onDelete={onDelete} />
+            ) : (
+              <SingleFileUploadWithProgress
+                key={idx}
+                file={fw.file}
+                onDelete={onDelete}
+                onUpload={onFileUpload}
+              />
+            )}
+          </>
         ))}
-      </Grid>
-      <ImageDropzone />
+        <ImageDropzone setImages={setImages} />
+      </SimpleGrid>
     </>
   );
 }
