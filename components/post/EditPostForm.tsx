@@ -34,16 +34,10 @@ export type ICreatePostInput = {
  * Renders an Add Post form
  * @return {ReactElement}
  */
-export default function AddPost() {
+export default function EditPostForm() {
   // Hooks
   const router = useRouter();
   const toast = useToast();
-
-  const { date, postEditId } = router.query;
-
-  const { data, isFetched } = useQuery([`posts/${postEditId}`], () =>
-    fetcher(postEditId as string)
-  );
 
   const {
     handleSubmit,
@@ -51,7 +45,10 @@ export default function AddPost() {
     control,
     formState: { errors },
   } = useForm<ICreatePostInput>();
-
+  const { date, postEditId } = router.query;
+  const { data, isFetched } = useQuery([`posts/${postEditId}`], () =>
+    fetcher(postEditId as string)
+  );
   const { mutate, isLoading } = useMutation(
     (data: ICreatePostInput) => {
       const input: UpdatePostInput = {

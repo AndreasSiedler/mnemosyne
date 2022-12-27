@@ -106,7 +106,7 @@ export default function PostItem({ post }: PostItemProps) {
               onClick={onOpen}
               isLoading={isLoading}
             />
-            <IconButton icon={<BiPencil />} aria-label={"Delete post"} onClick={handlePostEdit} />
+            <IconButton icon={<BiPencil />} aria-label={"Edit post"} onClick={handlePostEdit} />
           </Box>
         </Box>
         <Text noOfLines={5}>

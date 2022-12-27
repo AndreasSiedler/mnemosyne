@@ -81,7 +81,7 @@ const PostsPage: NextPage = () => {
     },
   });
 
-  const DynamicAddPostForm = dynamic(() => import("../../components/post/AddPostForm"), {
+  const DynamicAddPostForm = dynamic(() => import("../../components/post/EditPostForm"), {
     loading: () => <Spinner />,
   });
 
