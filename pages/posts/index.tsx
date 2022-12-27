@@ -1,21 +1,7 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import Layout from "../../components/layout/Layout";
-import {
-  Button,
-  Center,
-  Container,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  SimpleGrid,
-  Spinner,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Center, Container, SimpleGrid, Spinner, useToast } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -24,7 +10,7 @@ import { API } from "aws-amplify";
 import { listPosts } from "../../graphql/queries";
 import { CreatePostInput, CreatePostMutation, ListPostsQuery, Post } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
-import { isEmpty, map, reverse } from "lodash";
+import { map, reverse } from "lodash";
 import PostItem from "../../components/post/PostItem";
 import { createPost } from "../../graphql/mutations";
 import { toastPosition } from "../../config/constants";
@@ -115,19 +101,7 @@ const PostsPage: NextPage = () => {
           </SimpleGrid>
         </Container>
       </Layout>
-      <Modal onClose={handleEditClose} size={"2xl"} isOpen={!isEmpty(postEditId)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit Post</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <DynamicAddPostForm />
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={handleEditClose}>Close</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <DynamicAddPostForm />
     </>
   );
 };

@@ -1,7 +1,19 @@
 import { Controller, useForm } from "react-hook-form";
 import React from "react";
 import { API } from "aws-amplify";
-import { FormErrorMessage, FormControl, Button, Flex, useToast } from "@chakra-ui/react";
+import {
+  FormErrorMessage,
+  FormControl,
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useToast,
+} from "@chakra-ui/react";
 import { toastPosition } from "../../config/constants";
 import { RichTextEditor } from "../texteditor/RichtextEditor";
 import { useRouter } from "next/router";
@@ -11,6 +23,7 @@ import ImageManager from "../ImageManager";
 import { GetPostQuery, GetPostQueryVariables, Image, UpdatePostInput } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { getPost } from "../../graphql/queries";
+import { isEmpty } from "lodash";
 
 const fetcher = async (id: string) => {
   const variables: GetPostQueryVariables = {
@@ -38,7 +51,6 @@ export default function EditPostForm() {
   // Hooks
   const router = useRouter();
   const toast = useToast();
-
   const {
     handleSubmit,
     register,
@@ -87,60 +99,64 @@ export default function EditPostForm() {
     }
   );
 
-  /**
-   * Create post with data
-   * @param {ICreatePostInput} data
-   */
   async function onSubmit(data: ICreatePostInput): Promise<void> {
     mutate(data);
   }
 
-  return (
-    <>
-      {isFetched && (
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <FormControl isInvalid={Boolean(errors.images)} isRequired>
-            <ImageManager
-              {...register("images")}
-              imgs={(data?.images?.items as Image[]) ?? []}
-              // onChange={(files: CreateImageInput[]) => {
-              //   setValue(name, files);
-              // }}
-            />
-            <FormErrorMessage>{errors.images && errors.images.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl mt={"10"} isInvalid={Boolean(errors.content)} isRequired>
-            <Controller
-              control={control}
-              rules={{
-                required: "This is required",
-              }}
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <RichTextEditor
-                    value={data?.content ? JSON.parse(data?.content) : null}
-                    onChange={onChange}
-                  />
-                );
-              }}
-              name="content"
-            />
-          </FormControl>
+  const handleEditClose = () => {
+    router.push({ pathname: "posts" });
+  };
 
-          <Flex justifyContent={"end"}>
-            <Button
-              mt={4}
-              variant={"solid"}
-              colorScheme={"teal"}
-              size={"xl"}
-              isLoading={isLoading}
-              type="submit"
-            >
-              Save
+  return (
+    <Modal onClose={handleEditClose} size={"2xl"} isOpen={!isEmpty(postEditId)}>
+      <ModalOverlay />
+      <ModalContent>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <ModalHeader>Edit Post</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {isFetched && (
+              <>
+                <FormControl isInvalid={Boolean(errors.images)} isRequired>
+                  <ImageManager
+                    {...register("images")}
+                    imgs={(data?.images?.items as Image[]) ?? []}
+                    // onChange={(files: CreateImageInput[]) => {
+                    //   setValue(name, files);
+                    // }}
+                  />
+                  <FormErrorMessage>{errors.images && errors.images.message}</FormErrorMessage>
+                </FormControl>
+                <FormControl mt={"10"} isInvalid={Boolean(errors.content)} isRequired>
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: "This is required",
+                    }}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <RichTextEditor
+                          value={data?.content ? JSON.parse(data?.content) : null}
+                          onChange={onChange}
+                        />
+                      );
+                    }}
+                    name="content"
+                  />
+                </FormControl>
+              </>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant={"ghost"} onClick={handleEditClose} mr={3}>
+              Close
             </Button>
-          </Flex>
+            <Button variant={"solid"} colorScheme={"teal"} isLoading={isLoading} type="submit">
+              Save Post
+            </Button>
+          </ModalFooter>
         </form>
-      )}
-    </>
+      </ModalContent>
+    </Modal>
   );
 }
