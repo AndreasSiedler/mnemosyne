@@ -19,7 +19,7 @@ export default function DynamicImage({ imageKey }: DynamicImageProps): ReactElem
 
   if (error) return <Alert>Something went wrong</Alert>;
   if (!data) return <Skeleton />;
-  return <Image alt="" src={data} fill />;
+  return <Image alt="" src={data} fill style={{ objectFit: "cover" }} />;
 }
 
 const fetcher = async (key: string): Promise<string> => {

@@ -5,6 +5,7 @@ import {
   Alert,
   AlertIcon,
   Button,
+  Center,
   Container,
   Modal,
   ModalBody,
@@ -29,11 +30,12 @@ import {
   CreatePostInput,
   CreatePostMutation,
   ListPostsQuery,
+  ListPostsQueryVariables,
   ModelPostFilterInput,
   Post,
 } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
-import { isEmpty, map } from "lodash";
+import { isEmpty, map, reverse } from "lodash";
 import PostItem from "../../components/post/PostItem";
 import { createPost } from "../../graphql/mutations";
 import { toastPosition } from "../../config/constants";
@@ -53,16 +55,8 @@ const createFetcher = async (date: string) => {
 };
 
 const fetcher = async (date: string) => {
-  const filter: ModelPostFilterInput = {
-    date: {
-      eq: date as string,
-    },
-  };
   const repsonse = (await API.graphql({
     query: listPosts,
-    variables: {
-      filter: filter,
-    },
     authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
   })) as GraphQLResult<ListPostsQuery>;
 
@@ -118,17 +112,19 @@ const PostsPage: NextPage = () => {
           {/* <Calendar /> */}
           <SimpleGrid columns={2} spacing={5}>
             {isFetched &&
-              map(data?.items as Post[], (post) => <PostItem key={post.id} post={post} />)}
-            <Button
-              disabled={!isValidDate}
-              w={"full"}
-              h={"full"}
-              leftIcon={<AddIcon />}
-              onClick={handleAddPost}
-              isLoading={isLoading}
-            >
-              Add Post
-            </Button>
+              reverse(map(data?.items as Post[], (post) => <PostItem key={post.id} post={post} />))}
+            <Center py={6}>
+              <Button
+                disabled={!isValidDate}
+                w={"full"}
+                h={"full"}
+                leftIcon={<AddIcon />}
+                onClick={handleAddPost}
+                isLoading={isLoading}
+              >
+                Add Post
+              </Button>
+            </Center>
           </SimpleGrid>
 
           {!isValidDate && (

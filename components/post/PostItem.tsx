@@ -1,4 +1,4 @@
-import { Box, Center, useColorModeValue, IconButton } from "@chakra-ui/react";
+import { Box, Center, useColorModeValue, IconButton, Text } from "@chakra-ui/react";
 import { Post } from "../../API";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { BiPencil } from "react-icons/bi";
@@ -30,6 +30,7 @@ export default function PostItem({ post }: PostItemProps) {
     <Center py={6}>
       <Box
         borderWidth="1px"
+        height={"400px"}
         maxW={"445px"}
         w={"full"}
         bg={useColorModeValue("white", "gray.900")}
@@ -44,9 +45,15 @@ export default function PostItem({ post }: PostItemProps) {
             <IconButton icon={<BiPencil />} aria-label={"Delete post"} onClick={handlePostEdit} />
           </Box>
         </Box>
-        <Slate editor={editor} value={post?.content ? JSON.parse(post?.content) : []}>
-          <Editable renderElement={renderElement} readOnly placeholder="Enter some plain text..." />
-        </Slate>
+        <Text noOfLines={5}>
+          <Slate editor={editor} value={post?.content ? JSON.parse(post?.content) : []}>
+            <Editable
+              renderElement={renderElement}
+              readOnly
+              placeholder="Enter some plain text..."
+            />
+          </Slate>
+        </Text>
       </Box>
     </Center>
   );
