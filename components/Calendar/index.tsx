@@ -27,8 +27,8 @@ function RadioCard(props: any) {
         _focus={{
           boxShadow: "outline",
         }}
-        px={5}
-        py={3}
+        px={4}
+        py={2}
         textAlign={"center"}
       >
         {props.children}

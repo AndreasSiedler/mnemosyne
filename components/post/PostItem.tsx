@@ -29,10 +29,10 @@ export default function PostItem({ post }: PostItemProps) {
   return (
     <Center py={6}>
       <Box
+        borderWidth="1px"
         maxW={"445px"}
         w={"full"}
         bg={useColorModeValue("white", "gray.900")}
-        boxShadow={"md"}
         rounded={"md"}
         p={6}
         overflow={"hidden"}

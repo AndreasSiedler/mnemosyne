@@ -13,6 +13,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Spinner,
   useToast,
 } from "@chakra-ui/react";
@@ -113,22 +114,22 @@ const PostsPage: NextPage = () => {
   return (
     <>
       <Layout title="Add Post">
-        <Container maxW={"container.sm"} py={"10"} minH={"100vh"}>
-          <Calendar />
-          {isFetched &&
-            map(data?.items as Post[], (post) => <PostItem key={post.id} post={post} />)}
-
-          <Button
-            disabled={!isValidDate}
-            w={"full"}
-            h={20}
-            mt={10}
-            leftIcon={<AddIcon />}
-            onClick={handleAddPost}
-            isLoading={isLoading}
-          >
-            Add Post
-          </Button>
+        <Container maxW={"container.md"} py={"10"} minH={"100vh"}>
+          {/* <Calendar /> */}
+          <SimpleGrid columns={2} spacing={5}>
+            {isFetched &&
+              map(data?.items as Post[], (post) => <PostItem key={post.id} post={post} />)}
+            <Button
+              disabled={!isValidDate}
+              w={"full"}
+              h={"full"}
+              leftIcon={<AddIcon />}
+              onClick={handleAddPost}
+              isLoading={isLoading}
+            >
+              Add Post
+            </Button>
+          </SimpleGrid>
 
           {!isValidDate && (
             <Alert status="warning">

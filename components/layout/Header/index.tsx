@@ -64,7 +64,7 @@ export default function Header() {
               mr={4}
               leftIcon={<AddIcon />}
             >
-              Action
+              Post
             </Button>
             {user && <ProfileMenu />}
             {!user && (
