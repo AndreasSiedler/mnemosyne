@@ -2,8 +2,6 @@ import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import Layout from "../../components/layout/Layout";
 import {
-  Alert,
-  AlertIcon,
   Button,
   Center,
   Container,
@@ -19,21 +17,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import Calendar from "../../components/Calendar";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import moment from "moment";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API } from "aws-amplify";
 import { listPosts } from "../../graphql/queries";
-import {
-  CreatePostInput,
-  CreatePostMutation,
-  ListPostsQuery,
-  ListPostsQueryVariables,
-  ModelPostFilterInput,
-  Post,
-} from "../../API";
+import { CreatePostInput, CreatePostMutation, ListPostsQuery, Post } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { isEmpty, map, reverse } from "lodash";
 import PostItem from "../../components/post/PostItem";
@@ -67,7 +56,7 @@ const PostsPage: NextPage = () => {
   const router = useRouter();
   const toast = useToast();
   const { date, postEditId } = router.query;
-  const { data, isFetched } = useQuery([`posts/${date}`], () => fetcher(date as string));
+  const { data, isFetched } = useQuery(["posts"], () => fetcher(date as string));
   const { mutate, isLoading } = useMutation(createFetcher, {
     onError: () =>
       toast({
@@ -92,7 +81,6 @@ const PostsPage: NextPage = () => {
     },
   });
 
-  const isValidDate = moment(date).isValid();
   const DynamicAddPostForm = dynamic(() => import("../../components/post/AddPostForm"), {
     loading: () => <Spinner />,
   });
@@ -102,7 +90,7 @@ const PostsPage: NextPage = () => {
   };
 
   const handleEditClose = () => {
-    router.push({ pathname: "posts", query: { date } });
+    router.push({ pathname: "posts" });
   };
 
   return (
@@ -111,11 +99,8 @@ const PostsPage: NextPage = () => {
         <Container maxW={"container.md"} py={"10"} minH={"100vh"}>
           {/* <Calendar /> */}
           <SimpleGrid columns={2} spacing={5}>
-            {isFetched &&
-              reverse(map(data?.items as Post[], (post) => <PostItem key={post.id} post={post} />))}
             <Center py={6}>
               <Button
-                disabled={!isValidDate}
                 w={"full"}
                 h={"full"}
                 leftIcon={<AddIcon />}
@@ -125,14 +110,9 @@ const PostsPage: NextPage = () => {
                 Add Post
               </Button>
             </Center>
+            {isFetched &&
+              reverse(map(data?.items as Post[], (post) => <PostItem key={post.id} post={post} />))}
           </SimpleGrid>
-
-          {!isValidDate && (
-            <Alert status="warning">
-              <AlertIcon />
-              Please select a valid date from the calendar.
-            </Alert>
-          )}
         </Container>
       </Layout>
       <Modal onClose={handleEditClose} size={"2xl"} isOpen={!isEmpty(postEditId)}>
