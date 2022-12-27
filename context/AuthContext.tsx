@@ -13,7 +13,7 @@ import { CognitoUser } from "@aws-amplify/auth";
 
 interface UserContextType {
   user: CognitoUser | null;
-  setUser: Dispatch<SetStateAction<CognitoUser>>;
+  setUser: Dispatch<SetStateAction<CognitoUser | null>>;
 }
 
 const userContext = createContext<UserContextType>({} as UserContextType);

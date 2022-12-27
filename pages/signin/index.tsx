@@ -52,7 +52,7 @@ export default function Login(): ReactElement {
     } catch (error) {
       toast({
         title: "Failure.",
-        description: error.message,
+        description: "Something went wrong",
         status: "error",
         duration: 9000,
         isClosable: true,
