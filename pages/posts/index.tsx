@@ -14,10 +14,11 @@ import PostItem from "../../components/post/PostItem";
 import { createPost } from "../../graphql/mutations";
 import { toastPosition } from "../../config/constants";
 import EditPostForm from "../../components/post/EditPostForm";
+import moment from "moment";
 
-const createFetcher = async (date: string) => {
+const createFetcher = async () => {
   const input: CreatePostInput = {
-    date: date as string,
+    date: moment().format("YYYY-MM-DD"),
   };
   const response = (await API.graphql({
     query: createPost,
@@ -57,8 +58,9 @@ const PostsPage: NextPage = () => {
         position: toastPosition,
       }),
 
-    onSuccess: (data) => {
-      router.push({ pathname: "posts", query: { date: date, postEditId: data?.id } });
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries(["posts"]);
+      router.push({ pathname: "posts", query: { postEditId: data?.id } });
       return toast({
         title: "Success",
         description: "Post was updated.",
@@ -69,14 +71,6 @@ const PostsPage: NextPage = () => {
       });
     },
   });
-
-  const handleAddPost = () => {
-    mutate(date as string);
-  };
-
-  const handleEditClose = () => {
-    router.push({ pathname: "posts" });
-  };
 
   return (
     <>
@@ -92,14 +86,13 @@ const PostsPage: NextPage = () => {
               onClick={() => queryClient.invalidateQueries(["posts"])}
             />
           </Center>
-
-          <SimpleGrid columns={2} spacing={5}>
-            <Center py={6}>
+          <SimpleGrid columns={[1, 2]} spacing={8}>
+            <Center>
               <Button
                 w={"full"}
                 h={"full"}
                 leftIcon={<AddIcon />}
-                onClick={handleAddPost}
+                onClick={() => mutate()}
                 isLoading={isLoading}
               >
                 Add Post

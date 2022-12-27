@@ -3,19 +3,16 @@ import {
   Center,
   useColorModeValue,
   IconButton,
-  Text,
   useToast,
   useDisclosure,
+  Heading,
 } from "@chakra-ui/react";
 import { DeletePostInput, Post } from "../../API";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { BiPencil } from "react-icons/bi";
 import { useRouter } from "next/router";
 import DynamicImage from "../DynamicImage";
-import { first } from "lodash";
-import { Editable, Slate, withReact } from "slate-react";
-import { useCallback, useMemo } from "react";
-import { createEditor } from "slate";
+import { first, isEmpty, map } from "lodash";
 import { Element } from "../texteditor/Element";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { API } from "aws-amplify";
@@ -23,6 +20,7 @@ import { deletePost } from "../../graphql/mutations";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { toastPosition } from "../../config/constants";
 import ConfirmationModal from "../ConfirmationModal";
+import moment from "moment";
 
 const deleteMutation = async (id: string) => {
   const input: DeletePostInput = {
@@ -42,9 +40,7 @@ type PostItemProps = {
 };
 
 export default function PostItem({ post }: PostItemProps) {
-  const renderElement = useCallback((props: any) => <Element {...props} />, []);
   const toast = useToast();
-  const editor = useMemo(() => withReact(createEditor()), []);
   const queryClient = useQueryClient();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -59,7 +55,7 @@ export default function PostItem({ post }: PostItemProps) {
         position: toastPosition,
       }),
 
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.refetchQueries(["posts"]);
       return toast({
         title: "Success",
@@ -85,7 +81,7 @@ export default function PostItem({ post }: PostItemProps) {
   }
 
   return (
-    <Center py={6}>
+    <Center>
       <Box
         borderWidth="1px"
         height={"400px"}
@@ -109,7 +105,18 @@ export default function PostItem({ post }: PostItemProps) {
             <IconButton icon={<BiPencil />} aria-label={"Edit post"} onClick={handlePostEdit} />
           </Box>
         </Box>
-        {JSON.stringify(post?.content)}
+        <Heading size={"sm"}>{moment(post.date).format("DD.MM.YYYY")}</Heading>
+        {!isEmpty(post?.content) &&
+          map(JSON.parse(post?.content!), (item, index) => {
+            return (
+              <Element
+                key={index}
+                element={item.type}
+                children={map(item.children, (child) => child.text)}
+                attributes={item.attributes}
+              />
+            );
+          })}
       </Box>
       <ConfirmationModal
         title="Delete Post"
