@@ -1,11 +1,10 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import Layout from "../../components/layout/Layout";
-import { Button, Center, Container, SimpleGrid, Spinner, useToast } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
-import dynamic from "next/dynamic";
+import { Button, Center, Container, IconButton, SimpleGrid, useToast } from "@chakra-ui/react";
+import { AddIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API } from "aws-amplify";
 import { listPosts } from "../../graphql/queries";
 import { CreatePostInput, CreatePostMutation, ListPostsQuery, Post } from "../../API";
@@ -14,6 +13,7 @@ import { map, reverse } from "lodash";
 import PostItem from "../../components/post/PostItem";
 import { createPost } from "../../graphql/mutations";
 import { toastPosition } from "../../config/constants";
+import EditPostForm from "../../components/post/EditPostForm";
 
 const createFetcher = async (date: string) => {
   const input: CreatePostInput = {
@@ -29,7 +29,7 @@ const createFetcher = async (date: string) => {
   return response.data?.createPost;
 };
 
-const fetcher = async (date: string) => {
+const fetcher = async () => {
   const repsonse = (await API.graphql({
     query: listPosts,
     authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
@@ -41,8 +41,11 @@ const fetcher = async (date: string) => {
 const PostsPage: NextPage = () => {
   const router = useRouter();
   const toast = useToast();
-  const { date, postEditId } = router.query;
-  const { data, isFetched } = useQuery(["posts"], () => fetcher(date as string));
+  const queryClient = useQueryClient();
+
+  const { date } = router.query;
+  const { data, isRefetching, isFetched } = useQuery(["posts"], () => fetcher());
+
   const { mutate, isLoading } = useMutation(createFetcher, {
     onError: () =>
       toast({
@@ -67,10 +70,6 @@ const PostsPage: NextPage = () => {
     },
   });
 
-  const DynamicAddPostForm = dynamic(() => import("../../components/post/EditPostForm"), {
-    loading: () => <Spinner />,
-  });
-
   const handleAddPost = () => {
     mutate(date as string);
   };
@@ -84,6 +83,16 @@ const PostsPage: NextPage = () => {
       <Layout title="Add Post">
         <Container maxW={"container.md"} py={"10"} minH={"100vh"}>
           {/* <Calendar /> */}
+          <Center>
+            <IconButton
+              variant={"ghost"}
+              icon={<RepeatIcon />}
+              aria-label={"Refetch icon"}
+              isLoading={isRefetching}
+              onClick={() => queryClient.invalidateQueries(["posts"])}
+            />
+          </Center>
+
           <SimpleGrid columns={2} spacing={5}>
             <Center py={6}>
               <Button
@@ -101,7 +110,7 @@ const PostsPage: NextPage = () => {
           </SimpleGrid>
         </Container>
       </Layout>
-      <DynamicAddPostForm />
+      <EditPostForm />
     </>
   );
 };

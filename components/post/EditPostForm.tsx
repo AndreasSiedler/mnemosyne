@@ -17,7 +17,7 @@ import {
 import { toastPosition } from "../../config/constants";
 import { RichTextEditor } from "../texteditor/RichtextEditor";
 import { useRouter } from "next/router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updatePost } from "../../graphql/mutations";
 import ImageManager from "../ImageManager";
 import { GetPostQuery, GetPostQueryVariables, Image, UpdatePostInput } from "../../API";
@@ -51,16 +51,13 @@ export default function EditPostForm() {
   // Hooks
   const router = useRouter();
   const toast = useToast();
-  const {
-    handleSubmit,
-    register,
-    control,
-    formState: { errors },
-  } = useForm<ICreatePostInput>();
+  const queryClient = useQueryClient();
+
   const { date, postEditId } = router.query;
   const { data, isFetched } = useQuery([`posts/${postEditId}`], () =>
     fetcher(postEditId as string)
   );
+
   const { mutate, isLoading } = useMutation(
     (data: ICreatePostInput) => {
       const input: UpdatePostInput = {
@@ -87,17 +84,26 @@ export default function EditPostForm() {
           position: toastPosition,
         }),
 
-      onSuccess: () =>
-        toast({
+      onSuccess: async () => {
+        await queryClient.refetchQueries(["posts"]);
+        return toast({
           title: "Success",
           description: "Post was updated.",
           status: "success",
           duration: 9000,
           isClosable: true,
           position: toastPosition,
-        }),
+        });
+      },
     }
   );
+
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors },
+  } = useForm<ICreatePostInput>();
 
   async function onSubmit(data: ICreatePostInput): Promise<void> {
     mutate(data);

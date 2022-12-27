@@ -24,7 +24,7 @@ export type CustomPageProps = {
  * @return {ReactElement}
  */
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const queryClient = new QueryClient();
+  const [queryClient] = React.useState(() => new QueryClient());
 
   return (
     <AuthContext>

@@ -109,15 +109,7 @@ export default function PostItem({ post }: PostItemProps) {
             <IconButton icon={<BiPencil />} aria-label={"Edit post"} onClick={handlePostEdit} />
           </Box>
         </Box>
-        <Text noOfLines={5}>
-          <Slate editor={editor} value={post?.content ? JSON.parse(post?.content) : []}>
-            <Editable
-              renderElement={renderElement}
-              readOnly
-              placeholder="Enter some plain text..."
-            />
-          </Slate>
-        </Text>
+        {JSON.stringify(post?.content)}
       </Box>
       <ConfirmationModal
         title="Delete Post"
