@@ -150,6 +150,7 @@ export const onCreatePost = /* GraphQL */ `
       }
       date
       owner
+      type
       createdAt
       updatedAt
     }
@@ -180,6 +181,7 @@ export const onUpdatePost = /* GraphQL */ `
       }
       date
       owner
+      type
       createdAt
       updatedAt
     }
@@ -210,6 +212,7 @@ export const onDeletePost = /* GraphQL */ `
       }
       date
       owner
+      type
       createdAt
       updatedAt
     }

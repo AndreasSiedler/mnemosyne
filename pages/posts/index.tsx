@@ -6,8 +6,14 @@ import { AddIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API } from "aws-amplify";
-import { listPosts } from "../../graphql/queries";
-import { CreatePostInput, CreatePostMutation, ListPostsQuery, Post } from "../../API";
+import { postsByDate } from "../../graphql/queries";
+import {
+  CreatePostInput,
+  CreatePostMutation,
+  Post,
+  PostsByDateQuery,
+  PostsByDateQueryVariables,
+} from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { map, reverse } from "lodash";
 import PostItem from "../../components/post/PostItem";
@@ -19,6 +25,7 @@ import moment from "moment";
 const createFetcher = async () => {
   const input: CreatePostInput = {
     date: moment().format("YYYY-MM-DD"),
+    type: "Post",
   };
   const response = (await API.graphql({
     query: createPost,
@@ -31,12 +38,16 @@ const createFetcher = async () => {
 };
 
 const fetcher = async () => {
+  const variables: PostsByDateQueryVariables = {
+    type: "Post",
+  };
   const repsonse = (await API.graphql({
-    query: listPosts,
+    query: postsByDate,
     authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-  })) as GraphQLResult<ListPostsQuery>;
+    variables: variables,
+  })) as GraphQLResult<PostsByDateQuery>;
 
-  return repsonse.data?.listPosts;
+  return repsonse.data?.postsByDate;
 };
 
 const PostsPage: NextPage = () => {
@@ -44,7 +55,6 @@ const PostsPage: NextPage = () => {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { date } = router.query;
   const { data, isRefetching, isFetched } = useQuery(["posts"], () => fetcher());
 
   const { mutate, isLoading } = useMutation(createFetcher, {

@@ -187,12 +187,14 @@ export type CreatePostInput = {
   content?: string | null,
   date?: string | null,
   owner?: string | null,
+  type: string,
 };
 
 export type ModelPostConditionInput = {
   content?: ModelStringInput | null,
   date?: ModelStringInput | null,
   owner?: ModelIDInput | null,
+  type?: ModelStringInput | null,
   and?: Array< ModelPostConditionInput | null > | null,
   or?: Array< ModelPostConditionInput | null > | null,
   not?: ModelPostConditionInput | null,
@@ -205,6 +207,7 @@ export type Post = {
   images?: ModelImageConnection | null,
   date?: string | null,
   owner?: string | null,
+  type: string,
   createdAt: string,
   updatedAt: string,
 };
@@ -220,6 +223,7 @@ export type UpdatePostInput = {
   content?: string | null,
   date?: string | null,
   owner?: string | null,
+  type?: string | null,
 };
 
 export type DeletePostInput = {
@@ -269,6 +273,7 @@ export type ModelPostFilterInput = {
   content?: ModelStringInput | null,
   date?: ModelStringInput | null,
   owner?: ModelIDInput | null,
+  type?: ModelStringInput | null,
   and?: Array< ModelPostFilterInput | null > | null,
   or?: Array< ModelPostFilterInput | null > | null,
   not?: ModelPostFilterInput | null,
@@ -279,6 +284,22 @@ export type ModelPostConnection = {
   items:  Array<Post | null >,
   nextToken?: string | null,
 };
+
+export type ModelStringKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
 
 export type ModelSubscriptionTodoFilterInput = {
   id?: ModelSubscriptionIDInput | null,
@@ -349,6 +370,7 @@ export type ModelSubscriptionPostFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   content?: ModelSubscriptionStringInput | null,
   date?: ModelSubscriptionStringInput | null,
+  type?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPostFilterInput | null > | null,
   or?: Array< ModelSubscriptionPostFilterInput | null > | null,
 };
@@ -545,6 +567,7 @@ export type CreatePostMutation = {
     } | null,
     date?: string | null,
     owner?: string | null,
+    type: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -580,6 +603,7 @@ export type UpdatePostMutation = {
     } | null,
     date?: string | null,
     owner?: string | null,
+    type: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -615,6 +639,7 @@ export type DeletePostMutation = {
     } | null,
     date?: string | null,
     owner?: string | null,
+    type: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -769,6 +794,7 @@ export type GetPostQuery = {
     } | null,
     date?: string | null,
     owner?: string | null,
+    type: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -807,6 +833,51 @@ export type ListPostsQuery = {
       } | null,
       date?: string | null,
       owner?: string | null,
+      type: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PostsByDateQueryVariables = {
+  type: string,
+  date?: ModelStringKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelPostFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type PostsByDateQuery = {
+  postsByDate?:  {
+    __typename: "ModelPostConnection",
+    items:  Array< {
+      __typename: "Post",
+      id: string,
+      content?: string | null,
+      images?:  {
+        __typename: "ModelImageConnection",
+        items:  Array< {
+          __typename: "Image",
+          id: string,
+          postId?: string | null,
+          fullSize:  {
+            __typename: "S3Object",
+            region: string,
+            bucket: string,
+            key: string,
+          },
+          createdAt: string,
+          updatedAt: string,
+          owner?: string | null,
+        } | null >,
+        nextToken?: string | null,
+      } | null,
+      date?: string | null,
+      owner?: string | null,
+      type: string,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1000,6 +1071,7 @@ export type OnCreatePostSubscription = {
     } | null,
     date?: string | null,
     owner?: string | null,
+    type: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1035,6 +1107,7 @@ export type OnUpdatePostSubscription = {
     } | null,
     date?: string | null,
     owner?: string | null,
+    type: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1070,6 +1143,7 @@ export type OnDeletePostSubscription = {
     } | null,
     date?: string | null,
     owner?: string | null,
+    type: string,
     createdAt: string,
     updatedAt: string,
   } | null,

@@ -121,6 +121,7 @@ export const getPost = /* GraphQL */ `
       }
       date
       owner
+      type
       createdAt
       updatedAt
     }
@@ -153,6 +154,52 @@ export const listPosts = /* GraphQL */ `
         }
         date
         owner
+        type
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const postsByDate = /* GraphQL */ `
+  query PostsByDate(
+    $type: String!
+    $date: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelPostFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    postsByDate(
+      type: $type
+      date: $date
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        content
+        images {
+          items {
+            id
+            postId
+            fullSize {
+              region
+              bucket
+              key
+            }
+            createdAt
+            updatedAt
+            owner
+          }
+          nextToken
+        }
+        date
+        owner
+        type
         createdAt
         updatedAt
       }

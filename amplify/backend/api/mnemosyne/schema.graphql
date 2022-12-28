@@ -36,4 +36,5 @@ type Post
   images: [Image] @hasMany(indexName: "byPost", fields: ["id"])
   date: AWSDate
   owner: ID
+  type: String! @index(name: "postsByDate", queryField: "postsByDate", sortKeyFields: ["date"])
 }

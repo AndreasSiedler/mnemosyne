@@ -168,6 +168,7 @@ export const createPost = /* GraphQL */ `
       }
       date
       owner
+      type
       createdAt
       updatedAt
     }
@@ -198,6 +199,7 @@ export const updatePost = /* GraphQL */ `
       }
       date
       owner
+      type
       createdAt
       updatedAt
     }
@@ -228,6 +230,7 @@ export const deletePost = /* GraphQL */ `
       }
       date
       owner
+      type
       createdAt
       updatedAt
     }
