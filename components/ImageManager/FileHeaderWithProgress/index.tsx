@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/layout";
 import { Button, Image, Progress, useToast } from "@chakra-ui/react";
 import React, { ReactElement, useState } from "react";
 import { toastErrorConfig, toastPosition, toastSuccessConfig } from "../../../config/constants";
@@ -111,7 +110,7 @@ export default function SingleFileUploadWithProgress({
   }
 
   return (
-    <Box boxSize={"200"} position={"relative"}>
+    <>
       <Image
         position={"absolute"}
         top={0}
@@ -134,6 +133,6 @@ export default function SingleFileUploadWithProgress({
       )}
       <Button onClick={() => onDelete(file)}>Delete</Button>
       <Progress value={progress} />
-    </Box>
+    </>
   );
 }

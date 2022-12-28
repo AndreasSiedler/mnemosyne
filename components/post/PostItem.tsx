@@ -84,7 +84,7 @@ export default function PostItem({ post }: PostItemProps) {
     <Center>
       <Box
         borderWidth="1px"
-        height={"400px"}
+        height={"330px"}
         maxW={"445px"}
         w={"full"}
         bg={useColorModeValue("white", "gray.900")}

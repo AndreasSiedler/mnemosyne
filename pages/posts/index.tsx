@@ -96,11 +96,11 @@ const PostsPage: NextPage = () => {
               onClick={() => queryClient.invalidateQueries(["posts"])}
             />
           </Center>
-          <SimpleGrid columns={[1, 2]} spacing={8}>
+          <SimpleGrid columns={[1, 2]} spacing={8} mt={5}>
             <Center>
               <Button
                 w={"full"}
-                h={"full"}
+                h={"330px"}
                 leftIcon={<AddIcon />}
                 onClick={() => mutate()}
                 isLoading={isLoading}

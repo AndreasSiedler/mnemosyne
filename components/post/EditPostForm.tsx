@@ -114,7 +114,7 @@ export default function EditPostForm() {
   };
 
   return (
-    <Modal onClose={handleEditClose} size={"2xl"} isOpen={!isEmpty(postEditId)}>
+    <Modal onClose={handleEditClose} size={["full", "2xl"]} isOpen={!isEmpty(postEditId)}>
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

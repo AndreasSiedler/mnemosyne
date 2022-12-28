@@ -89,10 +89,10 @@ export default function ImageManager({ imgs = [] }: ImageDropzoneProps): ReactEl
 
   return (
     <>
-      <SimpleGrid mt={5} columns={3} spacing={5}>
+      <SimpleGrid mt={5} columns={[2, 3]} spacing={5}>
         {map(imgs, (img) => {
           return (
-            <Box boxSize={"200"} position={"relative"}>
+            <Box width={["full"]} height={["150"]} position={"relative"}>
               <DynamicImage imageKey={img.fullSize.key} />
               <Box position={"absolute"} right={0} p={2}>
                 <IconButton
@@ -107,7 +107,7 @@ export default function ImageManager({ imgs = [] }: ImageDropzoneProps): ReactEl
           );
         })}
         {map(images, (fw, idx) => (
-          <>
+          <Box width={["full"]} height={["150"]} position={"relative"}>
             {fw.errors.length ? (
               <UploadError key={idx} file={fw.file} errors={fw.errors} onDelete={onDelete} />
             ) : (
@@ -118,7 +118,7 @@ export default function ImageManager({ imgs = [] }: ImageDropzoneProps): ReactEl
                 onUpload={onFileUpload}
               />
             )}
-          </>
+          </Box>
         ))}
         <ImageDropzone setImages={setImages} />
       </SimpleGrid>
