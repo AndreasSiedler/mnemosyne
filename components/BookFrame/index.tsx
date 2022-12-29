@@ -1,5 +1,9 @@
 import React, { forwardRef } from "react";
 import HTMLFlipBook from "react-pageflip";
+import { Box } from "@chakra-ui/react";
+import { map } from "lodash";
+import { Post } from "../../API";
+import PageItem from "./PageItem";
 
 type PageCoverProps = {
   children: React.ReactNode;
@@ -27,22 +31,20 @@ type PageProps = {
 const Page = forwardRef<HTMLDivElement, PageProps>(
   ({ number, image, children }: PageProps, ref) => {
     return (
-      <div className="page" ref={ref} data-density={"soft"}>
+      <Box paddingY={5} className="page" ref={ref} data-density={"soft"}>
         <div className="page-content">
-          <h2 className="page-header">Page header - {number}</h2>
-          <div
-            className="page-image"
-            style={{ backgroundImage: "url(images/html/" + image + ")" }}
-          ></div>
           <div className="page-text">{children}</div>
-          <div className="page-footer">{number + 1}</div>
         </div>
-      </div>
+      </Box>
     );
   }
 );
 
-export default function BookFrame() {
+type BookFrameProps = {
+  posts: Post[];
+};
+
+export default function BookFrame({ posts }: BookFrameProps) {
   const onPage = () => {};
 
   const onChangeOrientation = () => {};
@@ -53,6 +55,9 @@ export default function BookFrame() {
     <div>
       <div className="container-md" style={{ position: "relative" }}>
         <HTMLFlipBook
+          drawShadow={true}
+          autoSize={true}
+          disableFlipByClick
           width={550}
           height={733}
           size="stretch"
@@ -62,61 +67,29 @@ export default function BookFrame() {
           maxHeight={2533}
           maxShadowOpacity={0.5}
           showCover={true}
-          mobileScrollSupport={true}
+          mobileScrollSupport={false}
           onFlip={onPage}
           onChangeOrientation={onChangeOrientation}
           onChangeState={onChangeState}
           className="flip-book html-book demo-book"
           style={{ backgroundImage: "url(images/background.jpg)" }}
-          // ref={(el) => (flipBook = el)}
+          startPage={0}
+          flippingTime={2}
+          usePortrait={false}
+          startZIndex={0}
+          clickEventForward={false}
+          useMouseEvents={true}
+          swipeDistance={0}
+          showPageCorners={false} // ref={(el) => (flipBook = el)}
         >
           <PageCover key={101} pos="bottom">
             THE END
           </PageCover>
-          <Page image={1 + ".jpg"} number={0 + 1}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus mollis nibh, non
-            convallis ex convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat. Integer
-            non tristique quam. Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-            metus, a venenatis tellus tellus id magna. Aliquam ac nulla rhoncus, accumsan eros sed,
-            viverra enim. Pellentesque non justo vel nibh sollicitudin pharetra suscipit ut ipsum.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus mollis nibh, non
-            convallis ex convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat. Integer
-            non tristique quam. Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-            metus, a venenatis tellus tellus id magna.
-          </Page>
-          <Page image={2 + ".jpg"} number={1 + 1}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus mollis nibh, non
-            convallis ex convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat. Integer
-            non tristique quam. Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-            metus, a venenatis tellus tellus id magna. Aliquam ac nulla rhoncus, accumsan eros sed,
-            viverra enim. Pellentesque non justo vel nibh sollicitudin pharetra suscipit ut ipsum.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus mollis nibh, non
-            convallis ex convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat. Integer
-            non tristique quam. Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-            metus, a venenatis tellus tellus id magna.
-          </Page>
-          <Page image={3 + ".jpg"} number={2 + 1}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus mollis nibh, non
-            convallis ex convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat. Integer
-            non tristique quam. Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-            metus, a venenatis tellus tellus id magna. Aliquam ac nulla rhoncus, accumsan eros sed,
-            viverra enim. Pellentesque non justo vel nibh sollicitudin pharetra suscipit ut ipsum.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus mollis nibh, non
-            convallis ex convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat. Integer
-            non tristique quam. Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-            metus, a venenatis tellus tellus id magna.
-          </Page>
-          <Page image={4 + ".jpg"} number={3 + 1}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus mollis nibh, non
-            convallis ex convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat. Integer
-            non tristique quam. Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-            metus, a venenatis tellus tellus id magna. Aliquam ac nulla rhoncus, accumsan eros sed,
-            viverra enim. Pellentesque non justo vel nibh sollicitudin pharetra suscipit ut ipsum.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus mollis nibh, non
-            convallis ex convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat. Integer
-            non tristique quam. Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-            metus, a venenatis tellus tellus id magna.
-          </Page>
+          {map(posts, (post, index) => (
+            <Page key={post.id} image={index + ".jpg"} number={index + 1}>
+              <PageItem post={post} />
+            </Page>
+          ))}
         </HTMLFlipBook>
       </div>
     </div>

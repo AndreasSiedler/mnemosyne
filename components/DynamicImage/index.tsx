@@ -21,7 +21,7 @@ export default function DynamicImage({ imageKey }: DynamicImageProps): ReactElem
   if (error) return <Alert>Something went wrong</Alert>;
   if (!data) return <Skeleton h={"210px"} />;
   return (
-    <Skeleton isLoaded={isLoaded} h={"210px"}>
+    <Skeleton isLoaded={isLoaded}>
       <Image
         onLoadingComplete={() => setIsLoaded(true)}
         alt=""

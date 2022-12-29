@@ -10,6 +10,7 @@ import { postsByDate } from "../../graphql/queries";
 import {
   CreatePostInput,
   CreatePostMutation,
+  Post,
   PostsByDateQuery,
   PostsByDateQueryVariables,
 } from "../../API";
@@ -83,7 +84,7 @@ const PostsPage: NextPage = () => {
   return (
     <>
       <Layout title="Add Post">
-        <Container maxW={"container.xl"}>
+        <Container maxW={"container.lg"}>
           {/* <Calendar /> */}
           <Center>
             <IconButton
@@ -94,8 +95,7 @@ const PostsPage: NextPage = () => {
               onClick={() => queryClient.invalidateQueries(["posts"])}
             />
           </Center>
-          <BookFrame />
-          <Center></Center>
+          {isFetched && <BookFrame posts={data?.items as Post[]} />}
         </Container>
       </Layout>
       <EditPostForm />
