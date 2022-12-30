@@ -1,6 +1,6 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import HTMLFlipBook from "react-pageflip";
-import { Box } from "@chakra-ui/react";
+import { Box, Button, Textarea } from "@chakra-ui/react";
 import { map } from "lodash";
 import { Post } from "../../API";
 import PageItem from "./PageItem";
@@ -45,19 +45,32 @@ type BookFrameProps = {
 };
 
 export default function BookFrame({ posts }: BookFrameProps) {
+  let flipBook = useRef();
+  const [isDisabled, setIsDisabled] = useState(false);
+
   const onPage = () => {};
 
   const onChangeOrientation = () => {};
 
-  const onChangeState = () => {};
+  const onChangeState = () => {
+    console.log("onChangeState");
+  };
+
+  const handleNextClick = () => {
+    console.log("flipbook", flipBook.current);
+    (flipBook as any)?.current?.getPageFlip().flipNext();
+  };
 
   return (
     <div>
       <div className="container-md" style={{ position: "relative" }}>
+        <Button onClick={() => setIsDisabled((value) => !value)}>Disable</Button>
+        <Button onClick={handleNextClick}>Next</Button>
         <HTMLFlipBook
           drawShadow={true}
           autoSize={true}
-          disableFlipByClick
+          disableFlipByClick={true}
+          onUpdate={(e) => console.log("update", e)}
           width={550}
           height={733}
           size="stretch"
@@ -72,15 +85,16 @@ export default function BookFrame({ posts }: BookFrameProps) {
           onChangeOrientation={onChangeOrientation}
           onChangeState={onChangeState}
           className="flip-book html-book demo-book"
-          style={{ backgroundImage: "url(images/background.jpg)" }}
+          style={{ backgroundImage: "url(images/page-background.jepg)" }}
           startPage={0}
           flippingTime={2}
           usePortrait={false}
           startZIndex={0}
           clickEventForward={false}
-          useMouseEvents={true}
+          useMouseEvents={!isDisabled}
           swipeDistance={0}
-          showPageCorners={false} // ref={(el) => (flipBook = el)}
+          showPageCorners={true}
+          ref={(el) => console.log(el)}
         >
           <PageCover key={101} pos="bottom">
             THE END

@@ -14,6 +14,7 @@ import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { useUser } from "../../../context/AuthContext";
 import ProfileMenu from "../../ProfileMenu";
 import { useRouter } from "next/router";
+import Logo from "../Logo";
 
 const Links = ["Posts", "Team"];
 
@@ -49,7 +50,7 @@ export default function Header() {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={"center"}>
-            <Box>Logo</Box>
+            <Logo />
             <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
               {Links.map((link) => (
                 <NavLink key={link}>{link}</NavLink>

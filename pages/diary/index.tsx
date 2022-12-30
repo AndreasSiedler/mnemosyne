@@ -1,7 +1,7 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import Layout from "../../components/layout/Layout";
-import { Center, Container, IconButton, useToast } from "@chakra-ui/react";
+import { Box, Center, Container, IconButton, useColorModeValue, useToast } from "@chakra-ui/react";
 import { RepeatIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,6 +20,7 @@ import { toastPosition } from "../../config/constants";
 import EditPostForm from "../../components/post/EditPostForm";
 import moment from "moment";
 import BookFrame from "../../components/BookFrame";
+import Calendar from "../../components/Calendar";
 
 const createFetcher = async () => {
   const input: CreatePostInput = {
@@ -82,7 +83,7 @@ const PostsPage: NextPage = () => {
   });
 
   return (
-    <>
+    <Box bg={useColorModeValue("gray.50", "gray.900")}>
       <Layout title="Add Post">
         <Container maxW={"container.lg"}>
           {/* <Calendar /> */}
@@ -99,7 +100,7 @@ const PostsPage: NextPage = () => {
         </Container>
       </Layout>
       <EditPostForm />
-    </>
+    </Box>
   );
 };
 

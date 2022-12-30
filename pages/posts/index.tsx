@@ -1,7 +1,16 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import Layout from "../../components/layout/Layout";
-import { Button, Center, Container, IconButton, SimpleGrid, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  IconButton,
+  SimpleGrid,
+  useColorModeValue,
+  useToast,
+} from "@chakra-ui/react";
 import { AddIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -83,7 +92,7 @@ const PostsPage: NextPage = () => {
   });
 
   return (
-    <>
+    <Box backgroundImage={"url(images/pink-background.jpg)"}>
       <Layout title="Add Post">
         <Container maxW={"container.md"} py={"10"} minH={"100vh"}>
           {/* <Calendar /> */}
@@ -114,7 +123,7 @@ const PostsPage: NextPage = () => {
         </Container>
       </Layout>
       <EditPostForm />
-    </>
+    </Box>
   );
 };
 
