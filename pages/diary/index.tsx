@@ -83,7 +83,7 @@ const PostsPage: NextPage = () => {
   });
 
   return (
-    <Box bg={useColorModeValue("gray.50", "gray.900")}>
+    <Box bg={useColorModeValue("gray.50", "gray.800")}>
       <Layout title="Add Post">
         <Container maxW={"container.lg"}>
           {/* <Calendar /> */}
