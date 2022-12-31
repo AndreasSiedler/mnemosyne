@@ -9,8 +9,9 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  useColorMode,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, CloseIcon, AddIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { useUser } from "../../../context/AuthContext";
 import ProfileMenu from "../../ProfileMenu";
 import { useRouter } from "next/router";
@@ -34,13 +35,14 @@ const NavLink = ({ children }: { children: ReactNode }) => (
 );
 
 export default function Header() {
+  const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useUser();
   const router = useRouter();
 
   return (
     <>
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+      <Box px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <IconButton
             size={"md"}
@@ -58,18 +60,13 @@ export default function Header() {
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
-            <Button
-              variant={"solid"}
-              colorScheme={"teal"}
-              size={"sm"}
-              mr={4}
-              leftIcon={<AddIcon />}
-            >
-              Post
+            <Button variant={"ghost"} mr={5} onClick={toggleColorMode}>
+              {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             </Button>
+
             {user && <ProfileMenu />}
             {!user && (
-              <Button size={"sm"} mr={4} onClick={() => router.push("/signin")}>
+              <Button variant={"ghost"} onClick={() => router.push("/signin")}>
                 Login
               </Button>
             )}

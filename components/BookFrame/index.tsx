@@ -67,34 +67,18 @@ export default function BookFrame({ posts }: BookFrameProps) {
         <Button onClick={() => setIsDisabled((value) => !value)}>Disable</Button>
         <Button onClick={handleNextClick}>Next</Button>
         <HTMLFlipBook
-          drawShadow={true}
-          autoSize={true}
           disableFlipByClick={true}
-          onUpdate={(e) => console.log("update", e)}
           width={550}
           height={733}
           size="stretch"
-          minWidth={115}
-          maxWidth={2000}
-          minHeight={100}
-          maxHeight={2533}
+          minWidth={315}
+          maxWidth={1000}
+          minHeight={400}
+          maxHeight={1533}
           maxShadowOpacity={0.5}
           showCover={true}
-          mobileScrollSupport={false}
-          onFlip={onPage}
-          onChangeOrientation={onChangeOrientation}
-          onChangeState={onChangeState}
-          className="flip-book html-book demo-book"
-          style={{ backgroundImage: "url(images/page-background.jepg)" }}
-          startPage={0}
-          flippingTime={2}
-          usePortrait={false}
-          startZIndex={0}
-          clickEventForward={false}
-          useMouseEvents={!isDisabled}
-          swipeDistance={0}
-          showPageCorners={true}
-          ref={(el) => console.log(el)}
+          mobileScrollSupport={true}
+          className="demo-book"
         >
           <PageCover key={101} pos="bottom">
             THE END
