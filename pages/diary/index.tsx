@@ -1,8 +1,7 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import Layout from "../../components/layout/Layout";
-import { Box, Center, Container, IconButton, useColorModeValue, useToast } from "@chakra-ui/react";
-import { RepeatIcon } from "@chakra-ui/icons";
+import { Box, Container, useColorModeValue, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API } from "aws-amplify";
@@ -20,7 +19,6 @@ import { toastPosition } from "../../config/constants";
 import EditPostForm from "../../components/post/EditPostForm";
 import moment from "moment";
 import BookFrame from "../../components/BookFrame";
-import Calendar from "../../components/Calendar";
 
 const createFetcher = async () => {
   const input: CreatePostInput = {
@@ -87,7 +85,7 @@ const PostsPage: NextPage = () => {
       <Layout title="Add Post">
         <Container maxW={"container.lg"}>
           {/* <Calendar /> */}
-          <Center>
+          {/* <Center>
             <IconButton
               variant={"ghost"}
               icon={<RepeatIcon />}
@@ -95,7 +93,7 @@ const PostsPage: NextPage = () => {
               isLoading={isRefetching}
               onClick={() => queryClient.invalidateQueries(["posts"])}
             />
-          </Center>
+          </Center> */}
           {isFetched && <BookFrame posts={data?.items as Post[]} />}
         </Container>
       </Layout>

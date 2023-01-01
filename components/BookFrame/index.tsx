@@ -1,9 +1,10 @@
 import React, { forwardRef, useRef, useState } from "react";
 import HTMLFlipBook from "react-pageflip";
-import { Box, Button, Textarea } from "@chakra-ui/react";
+import { Box, Button, IconButton, Textarea } from "@chakra-ui/react";
 import { map } from "lodash";
 import { Post } from "../../API";
 import PageItem from "./PageItem";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 type PageCoverProps = {
   children: React.ReactNode;
@@ -65,7 +66,17 @@ export default function BookFrame({ posts }: BookFrameProps) {
     <div>
       <div className="container-md" style={{ position: "relative" }}>
         <Button onClick={() => setIsDisabled((value) => !value)}>Disable</Button>
-        <Button onClick={handleNextClick}>Next</Button>
+
+        <IconButton
+          icon={<ChevronLeftIcon />}
+          onClick={handleNextClick}
+          aria-label={"Previous post"}
+        />
+        <IconButton
+          icon={<ChevronRightIcon />}
+          onClick={handleNextClick}
+          aria-label={"Next post"}
+        />
         <HTMLFlipBook
           disableFlipByClick={true}
           width={550}
