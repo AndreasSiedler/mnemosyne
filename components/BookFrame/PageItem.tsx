@@ -81,7 +81,17 @@ export default function PageItem({ post }: PostItemProps) {
   }
 
   return (
-    <Center>
+    <Center position={"relative"}>
+      <Box position={"absolute"} top={0} right={-20}>
+        <IconButton
+          icon={<DeleteIcon />}
+          aria-label={"Delete post"}
+          mr={1}
+          onClick={onOpen}
+          isLoading={isLoading}
+        />
+        <IconButton icon={<BiPencil />} aria-label={"Edit post"} onClick={handlePostEdit} />
+      </Box>
       <Box
         borderWidth="1px"
         height={"330px"}
@@ -101,16 +111,6 @@ export default function PageItem({ post }: PostItemProps) {
               ))}
           </SimpleGrid>
           {bigImage && <DynamicImage imageKey={bigImage?.fullSize.key as string} />}
-          <Box position={"absolute"} right={0} p={2}>
-            <IconButton
-              icon={<DeleteIcon />}
-              aria-label={"Delete post"}
-              mr={1}
-              onClick={onOpen}
-              isLoading={isLoading}
-            />
-            <IconButton icon={<BiPencil />} aria-label={"Edit post"} onClick={handlePostEdit} />
-          </Box>
         </Box>
         <Heading size={"sm"}>{moment(post.date).format("DD.MM.YYYY")}</Heading>
         {!isEmpty(post?.content) &&

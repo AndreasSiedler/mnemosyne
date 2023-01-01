@@ -25,21 +25,17 @@ const PageCover = forwardRef<HTMLDivElement, PageCoverProps>(
 
 type PageProps = {
   children: React.ReactNode;
-  number: number;
-  image: string;
 };
 
-const Page = forwardRef<HTMLDivElement, PageProps>(
-  ({ number, image, children }: PageProps, ref) => {
-    return (
-      <Box paddingY={5} className="page" ref={ref} data-density={"soft"}>
-        <div className="page-content">
-          <div className="page-text">{children}</div>
-        </div>
-      </Box>
-    );
-  }
-);
+const Page = forwardRef<HTMLDivElement, PageProps>(({ children }: PageProps, ref) => {
+  return (
+    <Box paddingY={5} className="page" ref={ref} data-density={"soft"}>
+      <div className="page-content">
+        <div className="page-text">{children}</div>
+      </div>
+    </Box>
+  );
+});
 
 type BookFrameProps = {
   posts: Post[];
@@ -47,6 +43,7 @@ type BookFrameProps = {
 
 export default function BookFrame({ posts }: BookFrameProps) {
   let flipBook = useRef() as any;
+  const [startPage, setStartPage] = useState(3);
 
   const handlePreviousClick = () => {
     flipBook.pageFlip().flipPrev();
@@ -56,9 +53,14 @@ export default function BookFrame({ posts }: BookFrameProps) {
     flipBook.pageFlip().flipNext();
   };
 
+  const turnToPage = () => {
+    flipBook.pageFlip().flip(4);
+  };
+
   return (
     <div>
       <div className="container-md" style={{ position: "relative" }}>
+        <Button onClick={() => turnToPage()}>Today</Button>
         <IconButton
           icon={<ChevronLeftIcon />}
           onClick={handlePreviousClick}
@@ -70,25 +72,29 @@ export default function BookFrame({ posts }: BookFrameProps) {
           aria-label={"Next post"}
         />
         <HTMLFlipBook
-          disableFlipByClick={true}
+          drawShadow={true}
+          startPage={startPage}
+          onFlip={(data) => console.log("flipped", data)}
+          disableFlipByClick={false}
           width={550}
           height={733}
           size="stretch"
           minWidth={315}
-          maxWidth={1000}
-          minHeight={400}
-          maxHeight={1533}
+          maxWidth={2000}
+          minHeight={100}
+          maxHeight={2533}
           maxShadowOpacity={0.5}
           showCover={true}
           mobileScrollSupport={true}
-          className="demo-book"
+          className="flip-book html-book demo-book"
+          style={{ backgroundImage: "url(images/background.jpg)" }}
           ref={(el) => (flipBook = el)}
         >
           <PageCover key={101} pos="bottom">
             One line by day
           </PageCover>
-          {map(posts, (post, index) => (
-            <Page key={post.id} image={index + ".jpg"} number={index + 1}>
+          {map(posts, (post) => (
+            <Page key={post.id}>
               <PageItem post={post} />
             </Page>
           ))}
