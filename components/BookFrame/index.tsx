@@ -46,30 +46,22 @@ type BookFrameProps = {
 };
 
 export default function BookFrame({ posts }: BookFrameProps) {
-  let flipBook = useRef();
-  const [isDisabled, setIsDisabled] = useState(false);
+  let flipBook = useRef() as any;
 
-  const onPage = () => {};
-
-  const onChangeOrientation = () => {};
-
-  const onChangeState = () => {
-    console.log("onChangeState");
+  const handlePreviousClick = () => {
+    flipBook.pageFlip().flipPrev();
   };
 
   const handleNextClick = () => {
-    console.log("flipbook", flipBook.current);
-    (flipBook as any)?.current?.getPageFlip().flipNext();
+    flipBook.pageFlip().flipNext();
   };
 
   return (
     <div>
       <div className="container-md" style={{ position: "relative" }}>
-        <Button onClick={() => setIsDisabled((value) => !value)}>Disable</Button>
-
         <IconButton
           icon={<ChevronLeftIcon />}
-          onClick={handleNextClick}
+          onClick={handlePreviousClick}
           aria-label={"Previous post"}
         />
         <IconButton
@@ -90,9 +82,10 @@ export default function BookFrame({ posts }: BookFrameProps) {
           showCover={true}
           mobileScrollSupport={true}
           className="demo-book"
+          ref={(el) => (flipBook = el)}
         >
           <PageCover key={101} pos="bottom">
-            THE END
+            One line by day
           </PageCover>
           {map(posts, (post, index) => (
             <Page key={post.id} image={index + ".jpg"} number={index + 1}>
