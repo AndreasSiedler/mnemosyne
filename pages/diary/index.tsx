@@ -1,9 +1,8 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import Layout from "../../components/layout/Layout";
-import { Box, Container, useColorModeValue, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Box, Container, useColorModeValue } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 import { API } from "aws-amplify";
 import { postsByDate } from "../../graphql/queries";
 import {
@@ -15,25 +14,9 @@ import {
 } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { createPost } from "../../graphql/mutations";
-import { toastPosition } from "../../config/constants";
 import EditPostForm from "../../components/post/EditPostForm";
 import moment from "moment";
 import BookFrame from "../../components/BookFrame";
-
-const createFetcher = async () => {
-  const input: CreatePostInput = {
-    date: moment().format("YYYY-MM-DD"),
-    type: "Post",
-  };
-  const response = (await API.graphql({
-    query: createPost,
-    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-    variables: {
-      input: input,
-    },
-  })) as GraphQLResult<CreatePostMutation>;
-  return response.data?.createPost;
-};
 
 const fetcher = async () => {
   const variables: PostsByDateQueryVariables = {
@@ -49,52 +32,33 @@ const fetcher = async () => {
 };
 
 const PostsPage: NextPage = () => {
-  const router = useRouter();
-  const toast = useToast();
-  const queryClient = useQueryClient();
+  const { data, isFetched } = useQuery(["posts"], () => fetcher());
+  const yearStart = moment().startOf("year").format("YYYY-MM-DD");
+  const yearEnd = moment().endOf("year").format("YYYY-MM-DD");
 
-  const { data, isRefetching, isFetched } = useQuery(["posts"], () => fetcher());
+  let yearDays: Post[] = [];
+  let day = yearStart;
 
-  const { mutate, isLoading } = useMutation(createFetcher, {
-    onError: () =>
-      toast({
-        title: "Failure",
-        description: "Error",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-        position: toastPosition,
-      }),
-
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries(["posts"]);
-      router.push({ pathname: "posts", query: { postEditId: data?.id } });
-      return toast({
-        title: "Success",
-        description: "Post was updated.",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-        position: toastPosition,
-      });
-    },
-  });
+  while (day !== yearEnd) {
+    const post: Post = {
+      id: day,
+      date: day,
+      type: "Post",
+      createdAt: "",
+      updatedAt: "",
+      __typename: "Post",
+    };
+    yearDays.push(post);
+    day = moment(day).add({ day: 1 }).format("YYYY-MM-DD");
+  }
 
   return (
     <Box bg={useColorModeValue("gray.50", "gray.800")}>
       <Layout title="Add Post">
         <Container maxW={"container.lg"}>
           {/* <Calendar /> */}
-          {/* <Center>
-            <IconButton
-              variant={"ghost"}
-              icon={<RepeatIcon />}
-              aria-label={"Refetch icon"}
-              isLoading={isRefetching}
-              onClick={() => queryClient.invalidateQueries(["posts"])}
-            />
-          </Center> */}
-          {isFetched && <BookFrame posts={data?.items as Post[]} />}
+
+          {isFetched && <BookFrame posts={yearDays} />}
         </Container>
       </Layout>
       <EditPostForm />
