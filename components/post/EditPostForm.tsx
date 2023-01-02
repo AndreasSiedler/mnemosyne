@@ -1,5 +1,5 @@
-import { Controller, useForm } from "react-hook-form";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import { API } from "aws-amplify";
 import {
   FormErrorMessage,
@@ -59,7 +59,7 @@ export default function EditPostForm() {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { edit, editDate, editId, date } = router.query;
+  const { editDate, editId, date } = router.query;
   const { data, isFetched } = useQuery([`posts/${editId}`], () => fetcher(editId as string));
 
   const { mutate, isLoading } = useMutation(
@@ -130,11 +130,11 @@ export default function EditPostForm() {
   }
 
   const handleEditClose = () => {
-    router.push({ pathname: "diary" }, undefined, { shallow: true });
+    router.push({ pathname: "diary", query: { date } }, undefined, { shallow: true });
   };
 
   return (
-    <Modal onClose={handleEditClose} size={["full", "2xl"]} isOpen={!isEmpty(edit)}>
+    <Modal onClose={handleEditClose} size={["full", "2xl"]} isOpen={!isEmpty(editDate)}>
       <ModalOverlay />
       <ModalContent minH={800} background={"url(images/page-background.jpeg)"}>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

@@ -1,4 +1,13 @@
-import { Box, Center, useToast, useDisclosure, Heading, SimpleGrid } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  useToast,
+  useDisclosure,
+  Heading,
+  SimpleGrid,
+  Flex,
+  Button,
+} from "@chakra-ui/react";
 import { DeletePostInput, Post } from "../../API";
 import { useRouter } from "next/router";
 import DynamicImage from "../DynamicImage";
@@ -59,6 +68,7 @@ export default function PageItem({ post }: PostItemProps) {
   });
 
   const router = useRouter();
+  const { date } = router.query;
   const bigImage = first(post.images?.items);
 
   function handlePostDelete() {
@@ -67,6 +77,32 @@ export default function PageItem({ post }: PostItemProps) {
 
   return (
     <Center position={"relative"}>
+      <Flex justifyContent={["flex-end"]}>
+        <Button
+          position={"absolute"}
+          top={0}
+          right={0}
+          variant={"solid"}
+          onClick={() => {
+            // const page = flipBook.pageFlip().getCurrentPageIndex();
+            // flipBook.pageFlip().turnToPage(page);
+            router.push(
+              {
+                pathname: "diary",
+                query: {
+                  editDate: post.date,
+                  editId: !isEmpty(post.id) ? post.id : undefined,
+                  date: date,
+                },
+              },
+              undefined,
+              { shallow: true }
+            );
+          }}
+        >
+          Edit
+        </Button>
+      </Flex>
       <Box
         borderWidth="1px"
         height={"330px"}

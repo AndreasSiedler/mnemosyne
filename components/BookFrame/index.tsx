@@ -1,12 +1,10 @@
-import React, { forwardRef, useRef } from "react";
+import React, { forwardRef, ReactNode, useRef } from "react";
 import HTMLFlipBook from "react-pageflip";
-import { Box, Button, Flex, HStack, IconButton } from "@chakra-ui/react";
-import { findIndex, isEmpty, map } from "lodash";
+import { Box, Button, HStack, IconButton } from "@chakra-ui/react";
+import { findIndex } from "lodash";
 import { Post } from "../../API";
-import PageItem from "./PageItem";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
-import { isOdd } from "../../utils/general";
 
 type PageCoverProps = {
   children: React.ReactNode;
@@ -28,30 +26,12 @@ const PageCover = forwardRef<HTMLDivElement, PageCoverProps>(
   }
 );
 
-type PageProps = {
-  children: React.ReactNode;
-};
-
-const Page = forwardRef<HTMLDivElement, PageProps>(({ children }: PageProps, ref) => {
-  return (
-    <Box
-      p={4}
-      background={"url(/images/page-background.jpeg)"}
-      boxSizing={"border-box"}
-      boxShadow={"0 1.5em 3em -1em rgb(70, 69, 69)"}
-      ref={ref}
-      data-density={"soft"}
-    >
-      {children}
-    </Box>
-  );
-});
-
 type BookFrameProps = {
   posts: Post[];
+  children: ReactNode;
 };
 
-export default function BookFrame({ posts }: BookFrameProps) {
+export default function BookFrame({ posts, children }: BookFrameProps) {
   const router = useRouter();
   const { date } = router.query;
 
@@ -121,35 +101,7 @@ export default function BookFrame({ posts }: BookFrameProps) {
           })
         }
       >
-        {map(posts, (post, index) => (
-          <Page key={post.date}>
-            <Flex justifyContent={["flex-end", isOdd(index) ? "flex-end" : "flex-start"]}>
-              <Button
-                variant={"solid"}
-                onClick={() => {
-                  const page = flipBook.pageFlip().getCurrentPageIndex();
-                  flipBook.pageFlip().turnToPage(page);
-                  router.push(
-                    {
-                      pathname: "diary",
-                      query: {
-                        edit: true,
-                        editDate: post.date,
-                        editId: !isEmpty(post.id) ? post.id : undefined,
-                        date: date,
-                      },
-                    },
-                    undefined,
-                    { shallow: true }
-                  );
-                }}
-              >
-                Edit
-              </Button>
-            </Flex>
-            <PageItem post={post} />
-          </Page>
-        ))}
+        {children}
       </HTMLFlipBook>
     </>
   );

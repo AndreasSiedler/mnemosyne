@@ -10,7 +10,9 @@ import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import EditPostForm from "../../components/post/EditPostForm";
 import moment from "moment";
 import BookFrame from "../../components/BookFrame";
-import { findIndex, forEach } from "lodash";
+import { findIndex, forEach, map } from "lodash";
+import Page from "../../components/BookFrame/Page";
+import PageItem from "../../components/BookFrame/PageItem";
 
 const fetcher = async () => {
   const variables: PostsByDateQueryVariables = {
@@ -58,7 +60,15 @@ const PostsPage: NextPage = () => {
     <Box bg={useColorModeValue("gray.50", "gray.800")}>
       <Layout title="Add Post">
         <Container h="calc(100vh)" maxW={"container.lg"}>
-          {isFetched && <BookFrame posts={yearDays} />}
+          {isFetched && (
+            <BookFrame posts={yearDays}>
+              {map(yearDays, (post, index) => (
+                <Page key={post.date}>
+                  <PageItem post={post} />
+                </Page>
+              ))}
+            </BookFrame>
+          )}
         </Container>
       </Layout>
       <EditPostForm />
