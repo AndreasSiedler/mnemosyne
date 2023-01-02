@@ -2,12 +2,10 @@ import React, { FC } from "react";
 import { AppProps } from "next/app";
 import AuthContext from "../context/AuthContext";
 import { ChakraProvider } from "@chakra-ui/react";
-import NextNProgress from "../components/nextnprogress";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Amplify } from "aws-amplify";
 import awsconfig from "../aws-exports";
 Amplify.configure(awsconfig);
-import "../styles/globals.css";
 
 import "@fontsource/roboto-mono";
 import theme from "../theme/theme";
@@ -31,7 +29,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     <AuthContext>
       <QueryClientProvider client={queryClient}>
         <ChakraProvider resetCSS theme={theme}>
-          <NextNProgress />
           <Component {...pageProps} />
         </ChakraProvider>
       </QueryClientProvider>

@@ -116,7 +116,7 @@ export default function EditPostForm() {
   return (
     <Modal onClose={handleEditClose} size={["full", "2xl"]} isOpen={!isEmpty(postEditId)}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent minH={800} background={"url(images/page-background.jpeg)"}>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <ModalHeader>Edit Post</ModalHeader>
           <ModalCloseButton />

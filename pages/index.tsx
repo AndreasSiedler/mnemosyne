@@ -20,10 +20,10 @@ import NextLink from "next/link";
 export const POSTS_NEW_ROUTE = "/posts/new";
 
 const posts: Post[] = [
-  { id: "1", type: "Post", createdAt: "12-12-22", updatedAt: "12-12-22", __typename: "post" },
-  { id: "2", type: "Post", createdAt: "12-12-22", updatedAt: "12-12-22", __typename: "post" },
-  { id: "3", type: "Post", createdAt: "12-12-22", updatedAt: "12-12-22", __typename: "post" },
-  { id: "4", type: "Post", createdAt: "12-12-22", updatedAt: "12-12-22", __typename: "post" },
+  { id: "1", type: "Post", createdAt: "12-12-22", updatedAt: "12-12-22", __typename: "Post" },
+  { id: "2", type: "Post", createdAt: "12-12-22", updatedAt: "12-12-22", __typename: "Post" },
+  { id: "3", type: "Post", createdAt: "12-12-22", updatedAt: "12-12-22", __typename: "Post" },
+  { id: "4", type: "Post", createdAt: "12-12-22", updatedAt: "12-12-22", __typename: "Post" },
 ];
 
 const PostsPage: NextPage = () => {

@@ -72,26 +72,12 @@ export default function PageItem({ post }: PostItemProps) {
   const params = router.query;
   const bigImage = first(post.images?.items);
 
-  function handlePostEdit() {
-    router.push({ pathname: "diary", query: { postEditId: post.id, ...params } });
-  }
-
   function handlePostDelete() {
     deletePost(post.id);
   }
 
   return (
     <Center position={"relative"}>
-      <Box position={"absolute"} top={0} right={-20}>
-        <IconButton
-          icon={<DeleteIcon />}
-          aria-label={"Delete post"}
-          mr={1}
-          onClick={onOpen}
-          isLoading={isLoading}
-        />
-        <IconButton icon={<BiPencil />} aria-label={"Edit post"} onClick={handlePostEdit} />
-      </Box>
       <Box
         borderWidth="1px"
         height={"330px"}

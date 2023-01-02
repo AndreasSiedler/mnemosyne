@@ -1,10 +1,12 @@
 import React, { forwardRef, useRef, useState } from "react";
 import HTMLFlipBook from "react-pageflip";
-import { Box, Button, IconButton, Textarea } from "@chakra-ui/react";
-import { map } from "lodash";
+import { Box, Button, Flex, HStack, IconButton } from "@chakra-ui/react";
+import { findIndex, map } from "lodash";
 import { Post } from "../../API";
 import PageItem from "./PageItem";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/router";
+import { isOdd } from "../../utils/general";
 
 type PageCoverProps = {
   children: React.ReactNode;
@@ -29,10 +31,15 @@ type PageProps = {
 
 const Page = forwardRef<HTMLDivElement, PageProps>(({ children }: PageProps, ref) => {
   return (
-    <Box paddingY={5} className="page" ref={ref} data-density={"soft"}>
-      <div className="page-content">
-        <div className="page-text">{children}</div>
-      </div>
+    <Box
+      p={4}
+      background={"url(/images/page-background.jpeg)"}
+      boxSizing={"border-box"}
+      boxShadow={"0 1.5em 3em -1em rgb(70, 69, 69)"}
+      ref={ref}
+      data-density={"soft"}
+    >
+      {children}
     </Box>
   );
 });
@@ -42,6 +49,9 @@ type BookFrameProps = {
 };
 
 export default function BookFrame({ posts }: BookFrameProps) {
+  const router = useRouter();
+  const { date } = router.query;
+
   let flipBook = useRef() as any;
   const [startPage, setStartPage] = useState(3);
 
@@ -60,21 +70,28 @@ export default function BookFrame({ posts }: BookFrameProps) {
   return (
     <div>
       <div className="container-md" style={{ position: "relative" }}>
-        <Button onClick={() => turnToPage()}>Today</Button>
-        <IconButton
-          icon={<ChevronLeftIcon />}
-          onClick={handlePreviousClick}
-          aria-label={"Previous post"}
-        />
-        <IconButton
-          icon={<ChevronRightIcon />}
-          onClick={handleNextClick}
-          aria-label={"Next post"}
-        />
+        <HStack justifyContent={"center"} mb={1}>
+          <Box>
+            <IconButton
+              variant={"ghost"}
+              icon={<ChevronLeftIcon />}
+              onClick={handlePreviousClick}
+              aria-label={"Previous post"}
+            />
+            <Button size={"sm"} variant={"ghost"} onClick={() => turnToPage()}>
+              Today
+            </Button>
+            <IconButton
+              variant={"ghost"}
+              icon={<ChevronRightIcon />}
+              onClick={handleNextClick}
+              aria-label={"Next post"}
+            />
+          </Box>
+        </HStack>
         <HTMLFlipBook
           drawShadow={true}
-          startPage={startPage}
-          onFlip={(data) => console.log("flipped", data)}
+          startPage={findIndex(posts, { date: date as string }) + 1}
           disableFlipByClick={false}
           width={550}
           height={733}
@@ -89,15 +106,45 @@ export default function BookFrame({ posts }: BookFrameProps) {
           className="flip-book html-book demo-book"
           style={{ backgroundImage: "url(images/background.jpg)" }}
           ref={(el) => (flipBook = el)}
+          flippingTime={500}
+          usePortrait={true}
+          startZIndex={0}
+          autoSize={true}
+          clickEventForward={true}
+          useMouseEvents={true}
+          swipeDistance={0}
+          showPageCorners={false}
+          onFlip={(data) =>
+            router.push(
+              { pathname: "diary", query: { date: posts[data.data - 1].date } },
+              undefined,
+              { shallow: true }
+            )
+          }
         >
           <PageCover key={101} pos="bottom">
             One line by day
           </PageCover>
-          {map(posts, (post) => (
+          {map(posts, (post, index) => (
             <Page key={post.id}>
+              <Flex justifyContent={["flex-end", isOdd(index) ? "flex-end" : "flex-start"]}>
+                <Button
+                  variant={"solid"}
+                  onClick={() => {
+                    const page = flipBook.pageFlip().getCurrentPageIndex();
+                    flipBook.pageFlip().turnToPage(page);
+                    router.push({ pathname: "diary", query: { postEditId: post.id, date: date } });
+                  }}
+                >
+                  Edit
+                </Button>
+              </Flex>
               <PageItem post={post} />
             </Page>
           ))}
+          <PageCover key={201} pos="bottom">
+            One line by day
+          </PageCover>
         </HTMLFlipBook>
       </div>
     </div>

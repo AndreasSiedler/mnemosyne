@@ -9,6 +9,19 @@ Highlightpost mit pin-funktion
 Export funktion
 Image caption
 
+Share einen schönen Spruch
+Design Einstellungen
+Richtung Journaling gehen (6 Minuten Tagebuch)
+
+Name:
+sixminutes.io
+journaly.io
+
+Text completion
+
+What are your wishes?
+Pin Sicherung
+
 Build your story together
 
 Diary App bauen
