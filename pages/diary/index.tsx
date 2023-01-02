@@ -5,20 +5,12 @@ import { Box, Container, useColorModeValue } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { API } from "aws-amplify";
 import { postsByDate } from "../../graphql/queries";
-import {
-  CreatePostInput,
-  CreatePostMutation,
-  Post,
-  PostsByDateQuery,
-  PostsByDateQueryVariables,
-} from "../../API";
+import { Post, PostsByDateQuery, PostsByDateQueryVariables } from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
-import { createPost } from "../../graphql/mutations";
 import EditPostForm from "../../components/post/EditPostForm";
 import moment from "moment";
 import BookFrame from "../../components/BookFrame";
-import Calendar from "../../components/Calendar";
-import { findIndex, forEach, map } from "lodash";
+import { findIndex, forEach } from "lodash";
 
 const fetcher = async () => {
   const variables: PostsByDateQueryVariables = {
@@ -43,7 +35,7 @@ const PostsPage: NextPage = () => {
 
   while (day !== monthEnd) {
     const post: Post = {
-      id: day,
+      id: "",
       date: day,
       type: "Post",
       createdAt: "",
@@ -65,7 +57,9 @@ const PostsPage: NextPage = () => {
   return (
     <Box bg={useColorModeValue("gray.50", "gray.800")}>
       <Layout title="Add Post">
-        <Container maxW={"container.lg"}>{isFetched && <BookFrame posts={yearDays} />}</Container>
+        <Container h="calc(100vh)" maxW={"container.lg"}>
+          {isFetched && <BookFrame posts={yearDays} />}
+        </Container>
       </Layout>
       <EditPostForm />
     </Box>

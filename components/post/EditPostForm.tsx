@@ -18,9 +18,15 @@ import { toastPosition } from "../../config/constants";
 import { RichTextEditor } from "../texteditor/RichtextEditor";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { updatePost } from "../../graphql/mutations";
+import { updatePost, createPost } from "../../graphql/mutations";
 import ImageManager from "../ImageManager";
-import { GetPostQuery, GetPostQueryVariables, Image, UpdatePostInput } from "../../API";
+import {
+  CreatePostInput,
+  GetPostQuery,
+  GetPostQueryVariables,
+  Image,
+  UpdatePostInput,
+} from "../../API";
 import { GraphQLResult, GRAPHQL_AUTH_MODE } from "@aws-amplify/api";
 import { getPost } from "../../graphql/queries";
 import { isEmpty } from "lodash";
@@ -38,7 +44,7 @@ const fetcher = async (id: string) => {
   return repsonse.data?.getPost;
 };
 
-export type ICreatePostInput = {
+export type IUpdatePostInput = {
   images?: Image[];
   content: any;
 };
@@ -53,20 +59,13 @@ export default function EditPostForm() {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { date, postEditId } = router.query;
-  const { data, isFetched } = useQuery([`posts/${postEditId}`], () =>
-    fetcher(postEditId as string)
-  );
+  const { edit, editDate, editId, date } = router.query;
+  const { data, isFetched } = useQuery([`posts/${editId}`], () => fetcher(editId as string));
 
   const { mutate, isLoading } = useMutation(
-    (data: ICreatePostInput) => {
-      const input: UpdatePostInput = {
-        id: postEditId as string,
-        content: JSON.stringify(data.content),
-        date: date as string,
-      };
+    ({ query, input }: { query: string; input: UpdatePostInput | CreatePostInput }) => {
       return API.graphql<any>({
-        query: updatePost,
+        query: query,
         authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
         variables: {
           input: input,
@@ -74,7 +73,7 @@ export default function EditPostForm() {
       });
     },
     {
-      onError: () =>
+      onError: () => {
         toast({
           title: "Failure",
           description: "Error",
@@ -82,7 +81,8 @@ export default function EditPostForm() {
           duration: 9000,
           isClosable: true,
           position: toastPosition,
-        }),
+        });
+      },
 
       onSuccess: async () => {
         await queryClient.refetchQueries(["posts"]);
@@ -103,18 +103,38 @@ export default function EditPostForm() {
     register,
     control,
     formState: { errors },
-  } = useForm<ICreatePostInput>();
+  } = useForm<IUpdatePostInput>();
 
-  async function onSubmit(data: ICreatePostInput): Promise<void> {
-    mutate(data);
+  async function onSubmit(data: IUpdatePostInput): Promise<void> {
+    if (!isEmpty(editId)) {
+      mutate({
+        query: updatePost,
+        input: {
+          id: editId,
+          content: JSON.stringify(data.content),
+          images: data.images,
+          date: editDate,
+        } as UpdatePostInput,
+      });
+    } else {
+      mutate({
+        query: createPost,
+        input: {
+          content: JSON.stringify(data.content),
+          images: data.images,
+          date: editDate,
+          type: "Post",
+        } as CreatePostInput,
+      });
+    }
   }
 
   const handleEditClose = () => {
-    router.push({ pathname: "diary" });
+    router.push({ pathname: "diary" }, undefined, { shallow: true });
   };
 
   return (
-    <Modal onClose={handleEditClose} size={["full", "2xl"]} isOpen={!isEmpty(postEditId)}>
+    <Modal onClose={handleEditClose} size={["full", "2xl"]} isOpen={!isEmpty(edit)}>
       <ModalOverlay />
       <ModalContent minH={800} background={"url(images/page-background.jpeg)"}>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

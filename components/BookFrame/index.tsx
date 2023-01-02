@@ -1,7 +1,7 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { forwardRef, useRef } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { Box, Button, Flex, HStack, IconButton } from "@chakra-ui/react";
-import { findIndex, map } from "lodash";
+import { findIndex, isEmpty, map } from "lodash";
 import { Post } from "../../API";
 import PageItem from "./PageItem";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
@@ -16,11 +16,14 @@ type PageCoverProps = {
 const PageCover = forwardRef<HTMLDivElement, PageCoverProps>(
   ({ children, pos }: PageCoverProps, ref) => {
     return (
-      <div className={"page page-cover page-cover-" + pos} ref={ref} data-density="hard">
-        <div className="page-content">
-          <h2>{children}</h2>
-        </div>
-      </div>
+      <Box
+        background={"url(https://i.imgur.com/mzp2Uub.jpg)"}
+        backgroundSize={"cover"}
+        ref={ref}
+        data-density="hard"
+      >
+        {children}
+      </Box>
     );
   }
 );
@@ -53,7 +56,6 @@ export default function BookFrame({ posts }: BookFrameProps) {
   const { date } = router.query;
 
   let flipBook = useRef() as any;
-  const [startPage, setStartPage] = useState(3);
 
   const handlePreviousClick = () => {
     flipBook.pageFlip().flipPrev();
@@ -68,85 +70,87 @@ export default function BookFrame({ posts }: BookFrameProps) {
   };
 
   return (
-    <div>
-      <div className="container-md" style={{ position: "relative" }}>
-        <HStack justifyContent={"center"} mb={1}>
-          <Box>
-            <IconButton
-              variant={"ghost"}
-              icon={<ChevronLeftIcon />}
-              onClick={handlePreviousClick}
-              aria-label={"Previous post"}
-            />
-            <Button size={"sm"} variant={"ghost"} onClick={() => turnToPage()}>
-              Today
-            </Button>
-            <IconButton
-              variant={"ghost"}
-              icon={<ChevronRightIcon />}
-              onClick={handleNextClick}
-              aria-label={"Next post"}
-            />
-          </Box>
-        </HStack>
-        <HTMLFlipBook
-          drawShadow={true}
-          startPage={findIndex(posts, { date: date as string }) + 1}
-          disableFlipByClick={false}
-          width={550}
-          height={733}
-          size="stretch"
-          minWidth={315}
-          maxWidth={2000}
-          minHeight={100}
-          maxHeight={2533}
-          maxShadowOpacity={0.5}
-          showCover={true}
-          mobileScrollSupport={true}
-          className="flip-book html-book demo-book"
-          style={{ backgroundImage: "url(images/background.jpg)" }}
-          ref={(el) => (flipBook = el)}
-          flippingTime={500}
-          usePortrait={true}
-          startZIndex={0}
-          autoSize={true}
-          clickEventForward={true}
-          useMouseEvents={true}
-          swipeDistance={0}
-          showPageCorners={false}
-          onFlip={(data) =>
-            router.push(
-              { pathname: "diary", query: { date: posts[data.data - 1].date } },
-              undefined,
-              { shallow: true }
-            )
-          }
-        >
-          <PageCover key={101} pos="bottom">
-            One line by day
-          </PageCover>
-          {map(posts, (post, index) => (
-            <Page key={post.id}>
-              <Flex justifyContent={["flex-end", isOdd(index) ? "flex-end" : "flex-start"]}>
-                <Button
-                  variant={"solid"}
-                  onClick={() => {
-                    const page = flipBook.pageFlip().getCurrentPageIndex();
-                    flipBook.pageFlip().turnToPage(page);
-                    router.push({ pathname: "diary", query: { postEditId: post.id, date: date } });
-                  }}
-                >
-                  Edit
-                </Button>
-              </Flex>
-              <PageItem post={post} />
-            </Page>
-          ))}
-          <PageCover key={201} pos="bottom">
-            One line by day
-          </PageCover>
-        </HTMLFlipBook>
-      </div>
-    </div>
+    <>
+      <HStack justifyContent={"center"} mb={1}>
+        <Box>
+          <IconButton
+            variant={"ghost"}
+            icon={<ChevronLeftIcon />}
+            onClick={handlePreviousClick}
+            aria-label={"Previous post"}
+          />
+          <Button size={"sm"} variant={"ghost"} onClick={() => turnToPage()}>
+            Today
+          </Button>
+          <IconButton
+            variant={"ghost"}
+            icon={<ChevronRightIcon />}
+            onClick={handleNextClick}
+            aria-label={"Next post"}
+          />
+        </Box>
+      </HStack>
+      <HTMLFlipBook
+        drawShadow={true}
+        startPage={findIndex(posts, { date: date as string }) + 1}
+        disableFlipByClick={false}
+        width={550}
+        height={733}
+        size="stretch"
+        minWidth={315}
+        maxWidth={2000}
+        minHeight={100}
+        maxHeight={2533}
+        maxShadowOpacity={0.5}
+        showCover={true}
+        mobileScrollSupport={true}
+        className="flip-book html-book demo-book"
+        style={{ backgroundImage: "url(images/background.jpg)" }}
+        ref={(el) => (flipBook = el)}
+        flippingTime={800}
+        usePortrait={true}
+        startZIndex={0}
+        autoSize={true}
+        clickEventForward={true}
+        useMouseEvents={true}
+        swipeDistance={5}
+        showPageCorners={false}
+        onFlip={(data) =>
+          router.push({ pathname: "diary", query: { date: posts[data.data].date } }, undefined, {
+            shallow: true,
+          })
+        }
+      >
+        {map(posts, (post, index) => (
+          <Page key={post.date}>
+            <Flex justifyContent={["flex-end", isOdd(index) ? "flex-end" : "flex-start"]}>
+              <Button
+                variant={"solid"}
+                onClick={() => {
+                  const page = flipBook.pageFlip().getCurrentPageIndex();
+                  flipBook.pageFlip().turnToPage(page);
+                  router.push(
+                    {
+                      pathname: "diary",
+                      query: {
+                        edit: true,
+                        editDate: post.date,
+                        editId: !isEmpty(post.id) ? post.id : undefined,
+                        date: date,
+                      },
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
+                }}
+              >
+                Edit
+              </Button>
+            </Flex>
+            <PageItem post={post} />
+          </Page>
+        ))}
+      </HTMLFlipBook>
+    </>
   );
 }

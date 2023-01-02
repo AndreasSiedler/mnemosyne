@@ -1,15 +1,5 @@
-import {
-  Box,
-  Center,
-  IconButton,
-  useToast,
-  useDisclosure,
-  Heading,
-  SimpleGrid,
-} from "@chakra-ui/react";
+import { Box, Center, useToast, useDisclosure, Heading, SimpleGrid } from "@chakra-ui/react";
 import { DeletePostInput, Post } from "../../API";
-import { DeleteIcon } from "@chakra-ui/icons";
-import { BiPencil } from "react-icons/bi";
 import { useRouter } from "next/router";
 import DynamicImage from "../DynamicImage";
 import { first, isEmpty, map } from "lodash";
@@ -69,7 +59,6 @@ export default function PageItem({ post }: PostItemProps) {
   });
 
   const router = useRouter();
-  const params = router.query;
   const bigImage = first(post.images?.items);
 
   function handlePostDelete() {
@@ -91,7 +80,7 @@ export default function PageItem({ post }: PostItemProps) {
           <SimpleGrid mt={5} columns={[2, 3]} spacing={5}>
             {!isEmpty(post.images?.items) &&
               map(post.images?.items, (image) => (
-                <Box width={["full"]} height={["150"]} position={"relative"}>
+                <Box key={image?.id} width={["full"]} height={["150"]} position={"relative"}>
                   <DynamicImage imageKey={image?.fullSize.key as string} />
                 </Box>
               ))}

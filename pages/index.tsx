@@ -14,7 +14,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { RepeatIcon } from "@chakra-ui/icons";
-import EditPostForm from "../components/post/EditPostForm";
 import NextLink from "next/link";
 
 export const POSTS_NEW_ROUTE = "/posts/new";
@@ -46,7 +45,6 @@ const PostsPage: NextPage = () => {
           <BookFrame posts={posts} />
         </Container>
       </Layout>
-      <EditPostForm />
     </Box>
   );
 };
